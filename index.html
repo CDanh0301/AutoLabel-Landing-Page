@@ -159,42 +159,193 @@
 
           <!-- Mockup Views Content -->
           <div class="lp-mockup-content">
-            <!-- VIEW 1: 3D LiDAR BEV -->
+            <!-- VIEW 1: 3D LiDAR BEV Pipeline (3D Illustration -> LiDAR -> AI Label) -->
             <div class="lp-mock-view active" id="view-bev">
-              <div class="lp-bev-canvas">
-                <!-- Concentric Polar Radar Rings -->
-                <div class="lp-lidar-radar-rings"></div>
-                <!-- Sweeping Laser Scan Beam -->
-                <div class="lp-lidar-sweep-beam"></div>
+              <div class="lp-3d-pipeline-wrap" id="lp3dPipelineWrap">
+                <!-- Top Pipeline Stage Switcher -->
+                <div class="lp-3d-stage-bar">
+                  <div class="lp-3d-stage-tabs">
+                    <button type="button" class="lp-3d-stage-btn active" data-stage="auto" title="Tự động diễn tiến qua các giai đoạn">
+                      <i class="ri-play-circle-line"></i>
+                      <span>Chu trình tự động</span>
+                    </button>
+                    <button type="button" class="lp-3d-stage-btn" data-stage="exploded" title="Xem tách lớp 3D không gian tương hỗ">
+                      <i class="ri-stack-line"></i>
+                      <span>Tách lớp 3D (Isometric)</span>
+                    </button>
+                    <span class="lp-3d-stage-sep"></span>
+                    <button type="button" class="lp-3d-stage-btn" data-stage="1" title="Xem mô hình vector và toạ độ không gian">
+                      <span class="lp-stage-num">1</span>
+                      <span>3D Illustration</span>
+                    </button>
+                    <button type="button" class="lp-3d-stage-btn" data-stage="2" title="Xem dữ liệu đám mây điểm LiDAR cảm biến">
+                      <span class="lp-stage-num">2</span>
+                      <span>LiDAR 3D Points</span>
+                    </button>
+                    <button type="button" class="lp-3d-stage-btn" data-stage="3" title="Xem các hộp bao 3D tự động nhận diện">
+                      <span class="lp-stage-num">3</span>
+                      <span>AI 3D Label</span>
+                    </button>
+                  </div>
+                  <div class="lp-3d-stage-badge" id="lp3dStageBadge">
+                    <span class="lp-hud-pulse"></span>
+                    <span id="lp3dStageBadgeText">Tự động: 3D Illustration &rarr; LiDAR &rarr; Label</span>
+                  </div>
+                </div>
 
-                <!-- Base Point Cloud Image -->
-                <img src="demo_lidar_bev.png" alt="LiDAR 3D Point Cloud BEV" class="lp-lidar-img">
+                <!-- 3D Perspective Viewport -->
+                <div class="lp-3d-viewport" id="lp3dViewport">
+                  <div class="lp-3d-scene mode-exploded" id="lp3dScene">
+                    <!-- LAYER 1: 3D Spatial Illustration -->
+                    <div class="lp-3d-layer layer-illustration" id="layerIllustration">
+                      <div class="lp-layer-tag">
+                        <span class="lp-layer-tag-dot" style="background:#38bdf8;"></span>
+                        <span>Lớp 1: 3D Spatial Illustration</span>
+                      </div>
+                      
+                      <!-- Spatial 3D Vector Grid & Radial Range Rings -->
+                      <div class="lp-spatial-grid"></div>
+                      <div class="lp-spatial-rings">
+                        <div class="lp-ring lp-ring-1"><span class="lp-ring-label">15m</span></div>
+                        <div class="lp-ring lp-ring-2"><span class="lp-ring-label">30m</span></div>
+                        <div class="lp-ring lp-ring-3"><span class="lp-ring-label">50m</span></div>
+                      </div>
+
+                      <!-- 3D Coordinate Axis Gizmo at Ego Origin -->
+                      <div class="lp-ego-gizmo">
+                        <div class="lp-gizmo-axis axis-x" title="Trục X (Bên phải)"><span class="lp-axis-name">X</span></div>
+                        <div class="lp-gizmo-axis axis-y" title="Trục Y (Tiến phía trước)"><span class="lp-axis-name">Y</span></div>
+                        <div class="lp-gizmo-axis axis-z" title="Trục Z (Độ cao)"><span class="lp-axis-name">Z</span></div>
+                        <div class="lp-ego-marker">
+                          <span class="lp-ego-core"></span>
+                          <span class="lp-ego-txt">EGO SENSOR</span>
+                        </div>
+                      </div>
+
+                      <!-- Vector Road Surface Lanes & Corridor Illustration -->
+                      <div class="lp-vector-corridor">
+                        <div class="lp-corridor-lane lane-left"></div>
+                        <div class="lp-corridor-lane lane-center"></div>
+                        <div class="lp-corridor-lane lane-right"></div>
+                      </div>
+                    </div>
+
+                    <!-- LAYER 2: LiDAR 3D Point Cloud -->
+                    <div class="lp-3d-layer layer-lidar" id="layerLidar">
+                      <div class="lp-layer-tag">
+                        <span class="lp-layer-tag-dot" style="background:#10b981;"></span>
+                        <span>Lớp 2: LiDAR 3D Point Cloud</span>
+                      </div>
+                      <!-- Raw Point Cloud BEV Render -->
+                      <img src="demo_lidar_bev.png" alt="LiDAR 3D Point Cloud" class="lp-3d-layer-img">
+                    </div>
+
+                    <!-- LAYER 3: AI 3D Labels & Cuboids -->
+                    <div class="lp-3d-layer layer-labels" id="layerLabels">
+                      <div class="lp-layer-tag">
+                        <span class="lp-layer-tag-dot" style="background:#f59e0b;"></span>
+                        <span>Lớp 3: AI 3D Bounding Labels</span>
+                      </div>
+
+                      <!-- 3D Bounding Cuboid 1 -->
+                      <div class="lp-cuboid-3d cuboid-car-1" style="left: 54%; top: 37%; width: 56px; height: 110px;">
+                        <div class="lp-cuboid-wireframe"></div>
+                        <div class="lp-cuboid-heading"></div>
+                        <div class="lp-cuboid-tag tag-emerald">
+                          <i class="ri-focus-2-line"></i> Car #104 <span class="tag-conf">0.98</span>
+                        </div>
+                      </div>
+
+                      <!-- 3D Bounding Cuboid 2 -->
+                      <div class="lp-cuboid-3d cuboid-car-2" style="left: 56%; top: 57%; width: 52px; height: 96px;">
+                        <div class="lp-cuboid-wireframe"></div>
+                        <div class="lp-cuboid-heading"></div>
+                        <div class="lp-cuboid-tag tag-amber">
+                          <i class="ri-focus-2-line"></i> Car #108 <span class="tag-conf">0.96</span>
+                        </div>
+                      </div>
+
+                      <!-- 3D Bounding Cuboid 3 -->
+                      <div class="lp-cuboid-3d cuboid-truck-3" style="left: 47%; top: 73%; width: 50px; height: 104px;">
+                        <div class="lp-cuboid-wireframe"></div>
+                        <div class="lp-cuboid-heading"></div>
+                        <div class="lp-cuboid-tag tag-cyan">
+                          <i class="ri-truck-line"></i> Truck #03 <span class="tag-conf">0.99</span>
+                        </div>
+                      </div>
+
+                      <!-- Connecting 3D laser projection stems linking cuboids to points & ground -->
+                      <div class="lp-projection-stem stem-1"></div>
+                      <div class="lp-projection-stem stem-2"></div>
+                      <div class="lp-projection-stem stem-3"></div>
+                    </div>
+                  </div>
+                </div>
 
                 <!-- Telemetry HUD Footer -->
                 <div class="lp-bev-hud">
                   <div class="lp-hud-chip"><span class="lp-hud-pulse"></span> LiDAR OS2-128 • 10Hz</div>
                   <div class="lp-hud-chip">124,800 Points/s</div>
-                  <div class="lp-hud-chip lp-bev-tag">BEVFusion Sync: &lt;2.1ms</div>
-                  <div class="lp-hud-status">🟢 18 Tracks Active</div>
+                  <div class="lp-hud-chip lp-bev-tag">3D Pipeline Active</div>
+                  <div class="lp-hud-status">🟢 18 Tracks Synchronized</div>
                 </div>
               </div>
             </div>
 
-            <!-- VIEW 2: Camera 2D Fusion -->
+            <!-- VIEW 2: Camera 2D Fusion (Cropped Video Label with Custom Play/Pause Controls) -->
             <div class="lp-mock-view" id="view-cam">
-              <div class="lp-cam-view">
-                <!-- Vertical Detection Scanner Beam -->
-                <div class="lp-cam-scanner-line"></div>
+              <div class="lp-cam-video-wrap" id="lpCamVideoWrap">
+                <!-- Video Player Container with precise crop -->
+                <div class="lp-cam-video-viewport" id="lpCamViewport">
+                  <video id="lpCamVideo" playsinline loop muted preload="auto">
+                    <source src="video_cropped.mp4" type="video/mp4">
+                    <source src="video.mp4" type="video/mp4">
+                  </video>
 
-                <!-- Base Camera 2D Image -->
-                <img src="demo_camera_2d.png" alt="Camera 2D Annotations" class="lp-cam-img">
+                  <!-- Big Center Floating Play/Pause Button on Hover/Paused -->
+                  <button type="button" class="lp-video-overlay-play" id="lpVideoOverlayPlay" aria-label="Phát hoặc Dừng Video">
+                    <i class="ri-play-fill" id="lpOverlayPlayIcon"></i>
+                  </button>
+                </div>
+
+                <!-- Custom Modern Video Control Bar -->
+                <div class="lp-video-ctrl-bar">
+                  <div class="lp-video-ctrl-left">
+                    <button type="button" class="lp-video-btn" id="lpVideoPlayBtn" title="Phát / Dừng (Phím cách)">
+                      <i class="ri-play-fill" id="lpVideoPlayIcon"></i>
+                    </button>
+                    <button type="button" class="lp-video-btn" id="lpVideoMuteBtn" title="Bật / Tắt âm thanh">
+                      <i class="ri-volume-mute-fill" id="lpVideoMuteIcon"></i>
+                    </button>
+                    <div class="lp-video-time-readout">
+                      <span id="lpVideoCurrentTime">00:00</span> / <span id="lpVideoDuration">00:09</span>
+                    </div>
+                  </div>
+
+                  <div class="lp-video-timeline-wrap" id="lpVideoTimeline">
+                    <div class="lp-video-timeline-track">
+                      <div class="lp-video-timeline-fill" id="lpVideoTimelineFill" style="width: 0%;"></div>
+                      <div class="lp-video-timeline-thumb" id="lpVideoTimelineThumb" style="left: 0%;"></div>
+                    </div>
+                  </div>
+
+                  <div class="lp-video-ctrl-right">
+                    <span class="lp-video-badge">
+                      <span class="lp-hud-pulse"></span>
+                      <span>2D Labeling Stream</span>
+                    </span>
+                    <button type="button" class="lp-video-btn" id="lpVideoFullscreenBtn" title="Toàn màn hình">
+                      <i class="ri-fullscreen-line"></i>
+                    </button>
+                  </div>
+                </div>
 
                 <!-- Telemetry HUD Footer -->
                 <div class="lp-cam-hud">
                   <div class="lp-hud-chip"><span class="lp-hud-pulse"></span> Camera Front-Wide 1080p</div>
                   <div class="lp-hud-chip">Auto-Exposure • 30 FPS</div>
-                  <div class="lp-hud-chip lp-bev-tag">SAM 2.1 Assisted</div>
-                  <div class="lp-hud-status">🟢 Calib Aligned</div>
+                  <div class="lp-hud-chip lp-bev-tag">SAM 2.1 Assisted Video</div>
+                  <div class="lp-hud-status">🟢 Bounding Tracked</div>
                 </div>
               </div>
             </div>
@@ -746,6 +897,7 @@
   <!-- Scripts -->
   <script>
     // 1. Xử lý chuyển đổi Tab trên Interactive Mockup
+    // 1. Xử lý chuyển đổi Tab trên Interactive Mockup
     (function initMockup() {
       var tabs = document.querySelectorAll('.lp-mockup-tab');
       var views = {
@@ -753,6 +905,7 @@
         cam: document.getElementById('view-cam'),
         qa: document.getElementById('view-qa')
       };
+      var video = document.getElementById('lpCamVideo');
 
       tabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
@@ -765,8 +918,207 @@
               views[k].classList.toggle('active', k === viewName);
             }
           });
+
+          // Manage video playback based on active tab
+          if (video) {
+            if (viewName === 'cam') {
+              video.play().catch(function() {});
+            } else {
+              video.pause();
+            }
+          }
         });
       });
+    })();
+
+    // 1.1 Bộ điều khiển chu trình 3D Pipeline (3D Illustration -> LiDAR -> AI Label)
+    (function init3DPipeline() {
+      var scene = document.getElementById('lp3dScene');
+      var viewport = document.getElementById('lp3dViewport');
+      var stageBtns = document.querySelectorAll('.lp-3d-stage-btn');
+      var badgeText = document.getElementById('lp3dStageBadgeText');
+      if (!scene || !viewport) return;
+
+      var stages = [
+        { id: '1', class: 'mode-stage-1', text: 'Bước 1: 3D Spatial Illustration (Không gian vector & toạ độ)' },
+        { id: '2', class: 'mode-stage-2', text: 'Bước 2: LiDAR 3D Points (Đám mây điểm thô từ cảm biến)' },
+        { id: '3', class: 'mode-stage-3', text: 'Bước 3: AI 3D Labeling (Nhận diện & Gán nhãn hộp bao 3D)' },
+        { id: 'exploded', class: 'mode-exploded', text: 'Tách lớp 3D (Isometric Exploded Stack)' }
+      ];
+
+      var currentIdx = 0;
+      var isAuto = true;
+      var autoTimer = null;
+
+      function setStage(stageId, manual) {
+        if (manual) {
+          isAuto = false;
+          if (autoTimer) {
+            clearInterval(autoTimer);
+            autoTimer = null;
+          }
+        }
+
+        stageBtns.forEach(function (btn) {
+          var s = btn.getAttribute('data-stage');
+          btn.classList.toggle('active', (isAuto && s === 'auto') || (!isAuto && s === stageId));
+        });
+
+        var st = stages.find(function (s) { return s.id === stageId; });
+        if (!st) return;
+
+        scene.className = 'lp-3d-scene ' + st.class;
+        if (badgeText) {
+          badgeText.innerHTML = (isAuto ? '<b>Tự động:</b> ' : '') + st.text;
+        }
+      }
+
+      function nextAutoStage() {
+        if (!isAuto) return;
+        currentIdx = (currentIdx + 1) % stages.length;
+        setStage(stages[currentIdx].id, false);
+      }
+
+      function startAuto() {
+        isAuto = true;
+        if (autoTimer) clearInterval(autoTimer);
+        setStage(stages[currentIdx].id, false);
+        stageBtns.forEach(function (btn) {
+          btn.classList.toggle('active', btn.getAttribute('data-stage') === 'auto');
+        });
+        autoTimer = setInterval(nextAutoStage, 3400);
+      }
+
+      stageBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var stage = this.getAttribute('data-stage');
+          if (stage === 'auto') {
+            startAuto();
+          } else {
+            setStage(stage, true);
+          }
+        });
+      });
+
+      // Mouse Parallax 3D tilt effect on viewport
+      viewport.addEventListener('mousemove', function (e) {
+        var rect = viewport.getBoundingClientRect();
+        var x = (e.clientX - rect.left) / rect.width - 0.5;
+        var y = (e.clientY - rect.top) / rect.height - 0.5;
+        var tiltX = -y * 12;
+        var tiltY = x * 12;
+        scene.style.transform = scene.style.transform.replace(/rotateX\([^)]*\)/, '')
+          .replace(/rotateZ\([^)]*\)/, '');
+      });
+
+      startAuto();
+    })();
+
+    // 1.2 Bộ điều khiển Video 2D Camera Labeled với Custom Controls
+    (function init2DVideoPlayer() {
+      var video = document.getElementById('lpCamVideo');
+      var viewport = document.getElementById('lpCamViewport');
+      var overlayBtn = document.getElementById('lpVideoOverlayPlay');
+      var overlayIcon = document.getElementById('lpOverlayPlayIcon');
+      var playBtn = document.getElementById('lpVideoPlayBtn');
+      var playIcon = document.getElementById('lpVideoPlayIcon');
+      var muteBtn = document.getElementById('lpVideoMuteBtn');
+      var muteIcon = document.getElementById('lpVideoMuteIcon');
+      var timeCurrent = document.getElementById('lpVideoCurrentTime');
+      var timeDuration = document.getElementById('lpVideoDuration');
+      var timelineTrack = document.getElementById('lpVideoTimeline');
+      var timelineFill = document.getElementById('lpVideoTimelineFill');
+      var timelineThumb = document.getElementById('lpVideoTimelineThumb');
+      var fullscreenBtn = document.getElementById('lpVideoFullscreenBtn');
+      var videoWrap = document.getElementById('lpCamVideoWrap');
+
+      if (!video) return;
+
+      function formatTime(sec) {
+        if (isNaN(sec) || !isFinite(sec)) return '00:00';
+        var m = Math.floor(sec / 60);
+        var s = Math.floor(sec % 60);
+        return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+      }
+
+      function updatePlayState(isPlaying) {
+        if (viewport) viewport.classList.toggle('is-playing', isPlaying);
+        if (playIcon) playIcon.className = isPlaying ? 'ri-pause-fill' : 'ri-play-fill';
+        if (overlayIcon) overlayIcon.className = isPlaying ? 'ri-pause-fill' : 'ri-play-fill';
+      }
+
+      function togglePlay() {
+        if (video.paused || video.ended) {
+          video.play().then(function() {
+            updatePlayState(true);
+          }).catch(function() {
+            updatePlayState(false);
+          });
+        } else {
+          video.pause();
+          updatePlayState(false);
+        }
+      }
+
+      if (overlayBtn) overlayBtn.addEventListener('click', function(e) { e.stopPropagation(); togglePlay(); });
+      if (playBtn) playBtn.addEventListener('click', function(e) { e.stopPropagation(); togglePlay(); });
+      if (viewport) viewport.addEventListener('click', function() { togglePlay(); });
+
+      // Mute / Unmute
+      if (muteBtn) {
+        muteBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          video.muted = !video.muted;
+          muteIcon.className = video.muted ? 'ri-volume-mute-fill' : 'ri-volume-up-fill';
+        });
+      }
+
+      // Time & Progress Updates
+      video.addEventListener('timeupdate', function() {
+        if (!video.duration) return;
+        var pct = (video.currentTime / video.duration) * 100;
+        if (timelineFill) timelineFill.style.width = pct + '%';
+        if (timelineThumb) timelineThumb.style.left = pct + '%';
+        if (timeCurrent) timeCurrent.textContent = formatTime(video.currentTime);
+      });
+
+      video.addEventListener('loadedmetadata', function() {
+        if (timeDuration) timeDuration.textContent = formatTime(video.duration);
+      });
+
+      // Seeking on timeline
+      if (timelineTrack) {
+        timelineTrack.addEventListener('click', function(e) {
+          var rect = timelineTrack.getBoundingClientRect();
+          var pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+          if (video.duration) {
+            video.currentTime = pos * video.duration;
+          }
+        });
+      }
+
+      // Fullscreen
+      if (fullscreenBtn && videoWrap) {
+        fullscreenBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (!document.fullscreenElement) {
+            if (videoWrap.requestFullscreen) {
+              videoWrap.requestFullscreen();
+            } else if (videoWrap.webkitRequestFullscreen) {
+              videoWrap.webkitRequestFullscreen();
+            }
+          } else {
+            if (document.exitFullscreen) {
+              document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+              document.webkitExitFullscreen();
+            }
+          }
+        });
+      }
+
+      video.addEventListener('play', function() { updatePlayState(true); });
+      video.addEventListener('pause', function() { updatePlayState(false); });
     })();
 
     // 2. Bộ quản lý chế độ Sáng / Tối độc lập cho Landing Page (GitHub Pages)

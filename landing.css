@@ -2027,110 +2027,462 @@ body.lp-body {
   box-shadow: var(--lp-mock-shadow), 0 0 65px -5px rgba(6, 182, 212, 0.35);
 }
 
-/* 7. LiDAR Canvas Scanning Beam & Polar Radar Grid */
-.lp-bev-canvas {
+/* ==========================================================================
+   7. 3D Pipeline Layer Stack (3D Illustration -> LiDAR -> AI Labels)
+   ========================================================================== */
+.lp-3d-pipeline-wrap {
+  width: 100%;
+  height: 520px;
+  background-color: #030712 !important;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Pipeline Stage Switcher Navigation Bar */
+.lp-3d-stage-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 10;
   position: relative;
 }
 
-.lp-lidar-radar-rings {
+.lp-3d-stage-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.lp-3d-stage-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--lp-font);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.lp-3d-stage-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.lp-3d-stage-btn.active {
+  background: linear-gradient(135deg, rgba(22, 119, 255, 0.25), rgba(6, 182, 212, 0.25));
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #38bdf8;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
+}
+
+.lp-stage-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 10px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.lp-3d-stage-btn.active .lp-stage-num {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+.lp-3d-stage-sep {
+  width: 1px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 0 4px;
+}
+
+.lp-3d-stage-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--lp-mono);
+  font-size: 11px;
+  color: #38bdf8;
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* 3D Viewport with Perspective */
+.lp-3d-viewport {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 50% 45%, #0f172a 0%, #030712 70%);
+}
+
+.lp-3d-scene {
+  position: relative;
+  width: 600px;
+  height: 380px;
+  transform-style: preserve-3d;
+  transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-origin: center center;
+}
+
+/* Modes for 3D Scene */
+.lp-3d-scene.mode-exploded {
+  transform: rotateX(54deg) rotateZ(-28deg);
+}
+
+.lp-3d-scene.mode-stage-1 {
+  transform: rotateX(32deg) rotateZ(-14deg);
+}
+
+.lp-3d-scene.mode-stage-2 {
+  transform: rotateX(32deg) rotateZ(-14deg);
+}
+
+.lp-3d-scene.mode-stage-3 {
+  transform: rotateX(32deg) rotateZ(-14deg);
+}
+
+.lp-3d-scene.mode-flat {
+  transform: rotateX(0deg) rotateZ(0deg);
+}
+
+/* Layer Base Styles */
+.lp-3d-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  transform-style: preserve-3d;
+  transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
+  pointer-events: none;
+}
+
+/* Floating Layer Name Tag */
+.lp-layer-tag {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(11, 15, 25, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #f1f5f9;
+  font-family: var(--lp-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  z-index: 20;
+}
+
+.lp-layer-tag-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* Layer 1: 3D Spatial Illustration */
+.layer-illustration {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  box-shadow: 0 0 30px rgba(6, 182, 212, 0.1);
+  overflow: hidden;
+}
+
+.mode-exploded .layer-illustration {
+  transform: translateZ(-70px);
+  opacity: 0.9;
+}
+
+.mode-stage-1 .layer-illustration {
+  transform: translateZ(20px);
+  opacity: 1;
+  border-color: rgba(56, 189, 248, 0.7);
+  box-shadow: 0 0 35px rgba(56, 189, 248, 0.25);
+}
+
+.mode-stage-2 .layer-illustration {
+  transform: translateZ(-60px);
+  opacity: 0.25;
+}
+
+.mode-stage-3 .layer-illustration {
+  transform: translateZ(-90px);
+  opacity: 0.15;
+}
+
+/* Spatial Grid on Layer 1 */
+.lp-spatial-grid {
+  position: absolute;
+  inset: 0;
+  background-size: 30px 30px;
+  background-image: 
+    linear-gradient(to right, rgba(56, 189, 248, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.12) 1px, transparent 1px);
+}
+
+/* Spatial Range Rings on Layer 1 */
+.lp-spatial-rings {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.lp-ring {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 440px;
-  height: 440px;
   border-radius: 50%;
-  border: 1px dashed rgba(6, 182, 212, 0.18);
-  pointer-events: none;
-  z-index: 2;
+  border: 1px dashed rgba(56, 189, 248, 0.22);
 }
 
-.lp-lidar-radar-rings::before {
-  content: '';
+.lp-ring-1 { width: 140px; height: 140px; }
+.lp-ring-2 { width: 260px; height: 260px; }
+.lp-ring-3 { width: 380px; height: 380px; }
+
+.lp-ring-label {
   position: absolute;
-  inset: 50px;
-  border-radius: 50%;
-  border: 1px dashed rgba(6, 182, 212, 0.14);
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--lp-mono);
+  font-size: 9px;
+  color: #38bdf8;
+  background: rgba(15, 23, 42, 0.9);
+  padding: 1px 4px;
+  border-radius: 3px;
 }
 
-.lp-lidar-radar-rings::after {
-  content: '';
+/* Ego Gizmo & Sensor Origin */
+.lp-ego-gizmo {
   position: absolute;
-  inset: 110px;
-  border-radius: 50%;
-  border: 1px solid rgba(6, 182, 212, 0.1);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
 }
 
-/* Sweeping laser scanner beam in BEV Canvas */
-.lp-lidar-sweep-beam {
+.lp-ego-marker {
   position: absolute;
   top: 0;
-  left: -20%;
-  width: 8px;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(6, 182, 212, 0) 0%,
-    rgba(6, 182, 212, 0.4) 60%,
-    rgba(56, 189, 248, 0.9) 100%
-  );
-  box-shadow: 0 0 24px rgba(6, 182, 212, 0.8), 0 0 48px rgba(6, 182, 212, 0.4);
+  left: 0;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.lp-ego-core {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 16px #38bdf8, 0 0 32px #06b6d4;
+  border: 2px solid #ffffff;
+}
+
+.lp-ego-txt {
+  font-family: var(--lp-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: #38bdf8;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Gizmo Coordinate Axes */
+.lp-gizmo-axis {
+  position: absolute;
+  height: 2px;
+  transform-origin: left center;
+}
+
+.axis-x {
+  width: 60px;
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+  transform: rotate(0deg);
+}
+
+.axis-y {
+  width: 60px;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  transform: rotate(-90deg);
+}
+
+.axis-z {
+  width: 50px;
+  background: #06b6d4;
+  box-shadow: 0 0 8px #06b6d4;
+  transform: rotate(135deg);
+}
+
+.lp-axis-name {
+  position: absolute;
+  right: -12px;
+  top: -7px;
+  font-family: var(--lp-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: inherit;
+}
+
+/* Vector Corridor on Layer 1 */
+.lp-vector-corridor {
+  position: absolute;
+  inset: 0;
   pointer-events: none;
-  z-index: 3;
-  animation: lp-lidar-sweep 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-@keyframes lp-lidar-sweep {
-  0% { left: -10%; opacity: 0; }
-  10% { opacity: 1; }
-  85% { opacity: 1; }
-  95%, 100% { left: 110%; opacity: 0; }
+.lp-corridor-lane {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
 }
 
-/* 8. 3D & 2D Perception Target Overlays on Mockup */
-.lp-target-overlay {
+.lane-left { left: 42%; border-left: 1px dashed rgba(56, 189, 248, 0.2); }
+.lane-center { left: 52%; border-left: 1.5px solid rgba(251, 191, 36, 0.35); }
+.lane-right { left: 62%; border-left: 1px dashed rgba(56, 189, 248, 0.2); }
+
+/* Layer 2: LiDAR Point Cloud */
+.layer-lidar {
+  background: rgba(2, 4, 8, 0.7);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 35px rgba(16, 185, 129, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lp-3d-layer-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: contrast(1.15) brightness(1.05);
+}
+
+.mode-exploded .layer-lidar {
+  transform: translateZ(55px);
+  opacity: 0.95;
+}
+
+.mode-stage-1 .layer-lidar {
+  transform: translateZ(-40px);
+  opacity: 0.25;
+}
+
+.mode-stage-2 .layer-lidar {
+  transform: translateZ(20px);
+  opacity: 1;
+  border-color: rgba(16, 185, 129, 0.7);
+  box-shadow: 0 0 35px rgba(16, 185, 129, 0.3);
+}
+
+.mode-stage-3 .layer-lidar {
+  transform: translateZ(-40px);
+  opacity: 0.35;
+}
+
+/* Layer 3: AI 3D Labels & Cuboids */
+.layer-labels {
+  background: transparent;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  box-shadow: 0 0 35px rgba(251, 191, 36, 0.12);
+}
+
+.mode-exploded .layer-labels {
+  transform: translateZ(165px);
+  opacity: 1;
+}
+
+.mode-stage-1 .layer-labels {
+  transform: translateZ(-80px);
+  opacity: 0.15;
+}
+
+.mode-stage-2 .layer-labels {
+  transform: translateZ(-60px);
+  opacity: 0.2;
+}
+
+.mode-stage-3 .layer-labels {
+  transform: translateZ(20px);
+  opacity: 1;
+  border-color: rgba(251, 191, 36, 0.7);
+  box-shadow: 0 0 35px rgba(251, 191, 36, 0.25);
+}
+
+/* 3D Bounding Cuboids */
+.lp-cuboid-3d {
   position: absolute;
   pointer-events: auto;
-  z-index: 4;
   cursor: pointer;
+  transform-style: preserve-3d;
   transition: transform 0.2s ease;
 }
 
-.lp-target-overlay:hover {
-  transform: scale(1.04);
+.lp-cuboid-3d:hover {
+  transform: scale(1.06);
 }
 
-/* 3D Box in LiDAR BEV */
-.lp-bev-target-1 {
-  top: 40%;
-  left: 54%;
-  width: 95px;
-  height: 60px;
-}
-
-.lp-bev-target-2 {
-  top: 24%;
-  left: 38%;
-  width: 80px;
-  height: 52px;
-}
-
-.lp-target-box-3d {
+.lp-cuboid-wireframe {
   position: absolute;
   inset: 0;
   border: 1.5px solid #10b981;
-  background: rgba(16, 185, 129, 0.08);
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
   border-radius: 4px;
+  background: rgba(16, 185, 129, 0.12);
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
 }
 
-.lp-target-box-amber {
+.cuboid-car-2 .lp-cuboid-wireframe {
   border-color: #fbbf24;
-  background: rgba(251, 191, 36, 0.08);
-  box-shadow: 0 0 12px rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.12);
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.4);
 }
 
-.lp-target-heading-arrow {
+.cuboid-truck-3 .lp-cuboid-wireframe {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+}
+
+/* Cuboid Heading Arrow */
+.lp-cuboid-heading {
   position: absolute;
   top: -12px;
   left: 50%;
@@ -2141,21 +2493,35 @@ body.lp-body {
   box-shadow: 0 0 6px #10b981;
 }
 
-.lp-target-heading-arrow::before {
+.cuboid-car-2 .lp-cuboid-heading {
+  background: #fbbf24;
+  box-shadow: 0 0 6px #fbbf24;
+}
+
+.cuboid-truck-3 .lp-cuboid-heading {
+  background: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8;
+}
+
+.lp-cuboid-heading::before {
   content: '';
   position: absolute;
   top: 0;
   left: -3px;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-bottom: 5px solid #10b981;
+  border-bottom: 5px solid currentColor;
 }
 
-.lp-target-pill {
+/* Cuboid Label Tag */
+.lp-cuboid-tag {
   position: absolute;
   bottom: calc(100% + 6px);
   left: 0;
-  background: rgba(11, 15, 25, 0.92);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(11, 15, 25, 0.94);
   border: 1px solid rgba(16, 185, 129, 0.5);
   color: #34d399;
   font-family: var(--lp-mono);
@@ -2165,62 +2531,260 @@ body.lp-body {
   border-radius: 4px;
   white-space: nowrap;
   backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-.lp-target-pill-amber {
+.lp-cuboid-tag.tag-amber {
   border-color: rgba(251, 191, 36, 0.5);
   color: #fbbf24;
 }
 
-/* 2D Camera Scanner & Target Bounding Box */
-.lp-cam-scanner-line {
+.lp-cuboid-tag.tag-cyan {
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #38bdf8;
+}
+
+.tag-conf {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 9px;
+}
+
+/* 3D Laser Projection Stems Linking Exploded Layers */
+.lp-projection-stem {
+  position: absolute;
+  width: 1.5px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(56, 189, 248, 0.8), rgba(16, 185, 129, 0.3), transparent);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.mode-exploded .lp-projection-stem {
+  opacity: 0.8;
+}
+
+.stem-1 {
+  left: 58%;
+  top: 38%;
+  height: 120px;
+  transform: rotateZ(35deg) translateY(-20px);
+}
+
+.stem-2 {
+  left: 60%;
+  top: 58%;
+  height: 110px;
+  transform: rotateZ(35deg) translateY(-20px);
+}
+
+.stem-3 {
+  left: 51%;
+  top: 74%;
+  height: 110px;
+  transform: rotateZ(35deg) translateY(-20px);
+}
+
+/* ==========================================================================
+   8. 2D Camera Labeled Video Player & Custom Controls
+   ========================================================================== */
+.lp-cam-video-wrap {
+  width: 100%;
+  min-height: 520px;
+  background-color: #020617;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.lp-cam-video-viewport {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 420px;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.lp-cam-video-viewport video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Big Center Floating Play Button */
+.lp-video-overlay-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.82);
+  border: 2px solid rgba(56, 189, 248, 0.6);
+  color: #38bdf8;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.35), 0 8px 32px rgba(0, 0, 0, 0.6);
+  z-index: 10;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lp-video-overlay-play:hover {
+  transform: translate(-50%, -50%) scale(1.12);
+  background: rgba(22, 119, 255, 0.9);
+  color: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 0 35px rgba(22, 119, 255, 0.6);
+}
+
+.lp-cam-video-viewport.is-playing .lp-video-overlay-play {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.8);
+}
+
+.lp-cam-video-viewport.is-playing:hover .lp-video-overlay-play {
+  opacity: 0.85;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Sleek Video Control Bar */
+.lp-video-ctrl-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 18px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 15;
+}
+
+.lp-video-ctrl-left,
+.lp-video-ctrl-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lp-video-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lp-video-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.lp-video-time-readout {
+  font-family: var(--lp-mono);
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.lp-video-time-readout span:first-child {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+/* Timeline Seekbar Track */
+.lp-video-timeline-wrap {
+  flex: 1;
+  padding: 10px 0;
+  cursor: pointer;
+}
+
+.lp-video-timeline-track {
+  position: relative;
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  overflow: visible;
+  transition: height 0.2s ease;
+}
+
+.lp-video-timeline-wrap:hover .lp-video-timeline-track {
+  height: 7px;
+}
+
+.lp-video-timeline-fill {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #38bdf8 30%, #ffffff 50%, #38bdf8 70%, transparent);
-  box-shadow: 0 0 16px #38bdf8, 0 0 32px rgba(56, 189, 248, 0.5);
+  bottom: 0;
+  background: linear-gradient(90deg, #1677ff, #06b6d4, #38bdf8);
+  border-radius: 9999px;
   pointer-events: none;
-  z-index: 3;
-  animation: lp-cam-scan-vert 4.5s ease-in-out infinite alternate;
 }
 
-@keyframes lp-cam-scan-vert {
-  0% { top: 4%; }
-  100% { top: 92%; }
-}
-
-.lp-cam-target-1 {
-  top: 36%;
-  left: 44%;
-  width: 140px;
-  height: 105px;
-}
-
-.lp-cam-bbox {
+.lp-video-timeline-thumb {
   position: absolute;
-  inset: 0;
-  border: 1.5px solid #38bdf8;
-  background: rgba(56, 189, 248, 0.08);
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.3);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
 }
 
-/* Reticle corner brackets */
-.lp-corner {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-color: #38bdf8;
+.lp-video-timeline-wrap:hover .lp-video-timeline-thumb {
+  opacity: 1;
 }
 
-.lp-corner-tl { top: -2px; left: -2px; border-top: 2.5px solid; border-left: 2.5px solid; }
-.lp-corner-tr { top: -2px; right: -2px; border-top: 2.5px solid; border-right: 2.5px solid; }
-.lp-corner-bl { bottom: -2px; left: -2px; border-bottom: 2.5px solid; border-left: 2.5px solid; }
-.lp-corner-br { bottom: -2px; right: -2px; border-bottom: 2.5px solid; border-right: 2.5px solid; }
+.lp-video-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--lp-mono);
+  font-size: 11px;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
 
-/* 9. Telemetry HUD Chips */
+/* ==========================================================================
+   9. Telemetry HUD Chips
+   ========================================================================== */
 .lp-hud-chip {
   display: inline-flex;
   align-items: center;
