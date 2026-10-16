@@ -240,44 +240,68 @@
                       <img src="demo_lidar_bev.png" alt="LiDAR 3D Point Cloud" class="lp-3d-layer-img">
                     </div>
 
-                    <!-- LAYER 3: AI 3D Labels & Cuboids -->
+                    <!-- LAYER 3: AI 3D Labels & Cuboids (Exact 6 Vehicles matched to LiDAR) -->
                     <div class="lp-3d-layer layer-labels" id="layerLabels">
                       <div class="lp-layer-tag">
-                        <span class="lp-layer-tag-dot" style="background:#f59e0b;"></span>
-                        <span>Lớp 3: AI 3D Bounding Labels</span>
+                        <span class="lp-layer-tag-dot" style="background:#ef4444;"></span>
+                        <span>Lớp 3: AI 3D Bounding Labels (6 Xe)</span>
                       </div>
 
-                      <!-- 3D Bounding Cuboid 1 -->
-                      <div class="lp-cuboid-3d cuboid-car-1" style="left: 54%; top: 37%; width: 56px; height: 110px;">
+                      <!-- Vehicle 1 (Top-Right) -->
+                      <div class="lp-cuboid-3d cuboid-car-1" title="Car #101 • 0.98 Conf">
                         <div class="lp-cuboid-wireframe"></div>
+                        <div class="lp-cuboid-front-edge"></div>
                         <div class="lp-cuboid-heading"></div>
-                        <div class="lp-cuboid-tag tag-emerald">
-                          <i class="ri-focus-2-line"></i> Car #104 <span class="tag-conf">0.98</span>
-                        </div>
+                        <div class="lp-cuboid-tag">Car #101 <span class="tag-conf">0.98</span></div>
                       </div>
 
-                      <!-- 3D Bounding Cuboid 2 -->
-                      <div class="lp-cuboid-3d cuboid-car-2" style="left: 56%; top: 57%; width: 52px; height: 96px;">
+                      <!-- Vehicle 2 (Middle-Right) -->
+                      <div class="lp-cuboid-3d cuboid-car-2" title="Car #102 • 0.96 Conf">
                         <div class="lp-cuboid-wireframe"></div>
+                        <div class="lp-cuboid-front-edge"></div>
                         <div class="lp-cuboid-heading"></div>
-                        <div class="lp-cuboid-tag tag-amber">
-                          <i class="ri-focus-2-line"></i> Car #108 <span class="tag-conf">0.96</span>
-                        </div>
+                        <div class="lp-cuboid-tag">Car #102 <span class="tag-conf">0.96</span></div>
                       </div>
 
-                      <!-- 3D Bounding Cuboid 3 -->
-                      <div class="lp-cuboid-3d cuboid-truck-3" style="left: 47%; top: 73%; width: 50px; height: 104px;">
+                      <!-- Vehicle 3 (Middle-Left) -->
+                      <div class="lp-cuboid-3d cuboid-car-3" title="Van #03 • 0.97 Conf">
                         <div class="lp-cuboid-wireframe"></div>
+                        <div class="lp-cuboid-front-edge"></div>
                         <div class="lp-cuboid-heading"></div>
-                        <div class="lp-cuboid-tag tag-cyan">
-                          <i class="ri-truck-line"></i> Truck #03 <span class="tag-conf">0.99</span>
-                        </div>
+                        <div class="lp-cuboid-tag">Van #03 <span class="tag-conf">0.97</span></div>
+                      </div>
+
+                      <!-- Vehicle 4 (Lower-Mid-Left) -->
+                      <div class="lp-cuboid-3d cuboid-car-4" title="Car #104 • 0.95 Conf">
+                        <div class="lp-cuboid-wireframe"></div>
+                        <div class="lp-cuboid-front-edge"></div>
+                        <div class="lp-cuboid-heading"></div>
+                        <div class="lp-cuboid-tag">Car #104 <span class="tag-conf">0.95</span></div>
+                      </div>
+
+                      <!-- Vehicle 5 (Bottom-Right) -->
+                      <div class="lp-cuboid-3d cuboid-car-5" title="Car #105 • 0.94 Conf">
+                        <div class="lp-cuboid-wireframe"></div>
+                        <div class="lp-cuboid-front-edge"></div>
+                        <div class="lp-cuboid-heading"></div>
+                        <div class="lp-cuboid-tag">Car #105 <span class="tag-conf">0.94</span></div>
+                      </div>
+
+                      <!-- Vehicle 6 (Bottom-Left) -->
+                      <div class="lp-cuboid-3d cuboid-car-6" title="Truck #06 • 0.99 Conf">
+                        <div class="lp-cuboid-wireframe"></div>
+                        <div class="lp-cuboid-front-edge"></div>
+                        <div class="lp-cuboid-heading"></div>
+                        <div class="lp-cuboid-tag">Truck #06 <span class="tag-conf">0.99</span></div>
                       </div>
 
                       <!-- Connecting 3D laser projection stems linking cuboids to points & ground -->
                       <div class="lp-projection-stem stem-1"></div>
                       <div class="lp-projection-stem stem-2"></div>
                       <div class="lp-projection-stem stem-3"></div>
+                      <div class="lp-projection-stem stem-4"></div>
+                      <div class="lp-projection-stem stem-5"></div>
+                      <div class="lp-projection-stem stem-6"></div>
                     </div>
                   </div>
                 </div>
@@ -313,9 +337,6 @@
                   <div class="lp-video-ctrl-left">
                     <button type="button" class="lp-video-btn" id="lpVideoPlayBtn" title="Phát / Dừng (Phím cách)">
                       <i class="ri-play-fill" id="lpVideoPlayIcon"></i>
-                    </button>
-                    <button type="button" class="lp-video-btn" id="lpVideoMuteBtn" title="Bật / Tắt âm thanh">
-                      <i class="ri-volume-mute-fill" id="lpVideoMuteIcon"></i>
                     </button>
                     <div class="lp-video-time-readout">
                       <span id="lpVideoCurrentTime">00:00</span> / <span id="lpVideoDuration">00:09</span>
@@ -986,7 +1007,7 @@
         stageBtns.forEach(function (btn) {
           btn.classList.toggle('active', btn.getAttribute('data-stage') === 'auto');
         });
-        autoTimer = setInterval(nextAutoStage, 3400);
+        autoTimer = setInterval(nextAutoStage, 1700);
       }
 
       stageBtns.forEach(function (btn) {
@@ -1022,8 +1043,6 @@
       var overlayIcon = document.getElementById('lpOverlayPlayIcon');
       var playBtn = document.getElementById('lpVideoPlayBtn');
       var playIcon = document.getElementById('lpVideoPlayIcon');
-      var muteBtn = document.getElementById('lpVideoMuteBtn');
-      var muteIcon = document.getElementById('lpVideoMuteIcon');
       var timeCurrent = document.getElementById('lpVideoCurrentTime');
       var timeDuration = document.getElementById('lpVideoDuration');
       var timelineTrack = document.getElementById('lpVideoTimeline');
@@ -1033,6 +1052,9 @@
       var videoWrap = document.getElementById('lpCamVideoWrap');
 
       if (!video) return;
+
+      // Ensure video is strictly muted
+      video.muted = true;
 
       function formatTime(sec) {
         if (isNaN(sec) || !isFinite(sec)) return '00:00';
@@ -1063,15 +1085,6 @@
       if (overlayBtn) overlayBtn.addEventListener('click', function(e) { e.stopPropagation(); togglePlay(); });
       if (playBtn) playBtn.addEventListener('click', function(e) { e.stopPropagation(); togglePlay(); });
       if (viewport) viewport.addEventListener('click', function() { togglePlay(); });
-
-      // Mute / Unmute
-      if (muteBtn) {
-        muteBtn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          video.muted = !video.muted;
-          muteIcon.className = video.muted ? 'ri-volume-mute-fill' : 'ri-volume-up-fill';
-        });
-      }
 
       // Time & Progress Updates
       video.addEventListener('timeupdate', function() {

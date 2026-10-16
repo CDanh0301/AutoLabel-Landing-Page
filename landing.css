@@ -2144,10 +2144,11 @@ body.lp-body {
 
 .lp-3d-scene {
   position: relative;
-  width: 600px;
-  height: 380px;
+  width: 440px;
+  height: 440px;
+  aspect-ratio: 1 / 1;
   transform-style: preserve-3d;
-  transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
   transform-origin: center center;
 }
 
@@ -2178,7 +2179,7 @@ body.lp-body {
   inset: 0;
   border-radius: 12px;
   transform-style: preserve-3d;
-  transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.35s ease;
   pointer-events: none;
 }
 
@@ -2245,7 +2246,7 @@ body.lp-body {
 .lp-spatial-grid {
   position: absolute;
   inset: 0;
-  background-size: 30px 30px;
+  background-size: 28px 28px;
   background-image: 
     linear-gradient(to right, rgba(56, 189, 248, 0.12) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(56, 189, 248, 0.12) 1px, transparent 1px);
@@ -2331,21 +2332,21 @@ body.lp-body {
 }
 
 .axis-x {
-  width: 60px;
+  width: 50px;
   background: #ef4444;
   box-shadow: 0 0 8px #ef4444;
   transform: rotate(0deg);
 }
 
 .axis-y {
-  width: 60px;
+  width: 50px;
   background: #10b981;
   box-shadow: 0 0 8px #10b981;
   transform: rotate(-90deg);
 }
 
 .axis-z {
-  width: 50px;
+  width: 40px;
   background: #06b6d4;
   box-shadow: 0 0 8px #06b6d4;
   transform: rotate(135deg);
@@ -2381,19 +2382,20 @@ body.lp-body {
 
 /* Layer 2: LiDAR Point Cloud */
 .layer-lidar {
-  background: rgba(2, 4, 8, 0.7);
+  background: #000;
   border: 1px solid rgba(16, 185, 129, 0.3);
   box-shadow: 0 0 35px rgba(16, 185, 129, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .lp-3d-layer-img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  filter: contrast(1.15) brightness(1.05);
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
 }
 
 .mode-exploded .layer-lidar {
@@ -2423,6 +2425,8 @@ body.lp-body {
   background: transparent;
   border: 1px solid rgba(251, 191, 36, 0.3);
   box-shadow: 0 0 35px rgba(251, 191, 36, 0.12);
+  position: absolute;
+  inset: 0;
 }
 
 .mode-exploded .layer-labels {
@@ -2447,58 +2451,49 @@ body.lp-body {
   box-shadow: 0 0 35px rgba(251, 191, 36, 0.25);
 }
 
-/* 3D Bounding Cuboids */
+/* 3D Bounding Cuboids (Matched 100% to vehicles in demo_lidar_bev.png) */
 .lp-cuboid-3d {
   position: absolute;
   pointer-events: auto;
   cursor: pointer;
   transform-style: preserve-3d;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .lp-cuboid-3d:hover {
-  transform: scale(1.06);
+  filter: brightness(1.3);
 }
 
+/* Red Wireframe Box matching LiDAR image */
 .lp-cuboid-wireframe {
   position: absolute;
   inset: 0;
-  border: 1.5px solid #10b981;
-  border-radius: 4px;
-  background: rgba(16, 185, 129, 0.12);
-  box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+  border: 1.8px solid #ef4444;
+  border-radius: 2px;
+  background: rgba(239, 68, 68, 0.16);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5), inset 0 0 8px rgba(239, 68, 68, 0.2);
 }
 
-.cuboid-car-2 .lp-cuboid-wireframe {
-  border-color: #fbbf24;
-  background: rgba(251, 191, 36, 0.12);
-  box-shadow: 0 0 16px rgba(251, 191, 36, 0.4);
+/* Front Cyan Edge matching LiDAR front line */
+.lp-cuboid-front-edge {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8, 0 0 14px rgba(56, 189, 248, 0.8);
+  border-radius: 1px;
 }
 
-.cuboid-truck-3 .lp-cuboid-wireframe {
-  border-color: #38bdf8;
-  background: rgba(56, 189, 248, 0.12);
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
-}
-
-/* Cuboid Heading Arrow */
+/* Heading Direction Arrow */
 .lp-cuboid-heading {
   position: absolute;
-  top: -12px;
+  bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
-  width: 2px;
-  height: 12px;
-  background: #10b981;
-  box-shadow: 0 0 6px #10b981;
-}
-
-.cuboid-car-2 .lp-cuboid-heading {
-  background: #fbbf24;
-  box-shadow: 0 0 6px #fbbf24;
-}
-
-.cuboid-truck-3 .lp-cuboid-heading {
+  width: 1.5px;
+  height: 9px;
   background: #38bdf8;
   box-shadow: 0 0 6px #38bdf8;
 }
@@ -2506,84 +2501,147 @@ body.lp-body {
 .lp-cuboid-heading::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -3px;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 5px solid currentColor;
+  bottom: 0;
+  left: -2.5px;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 4px solid #38bdf8;
 }
 
-/* Cuboid Label Tag */
+/* Floating AI Label Tag */
 .lp-cuboid-tag {
   position: absolute;
-  bottom: calc(100% + 6px);
-  left: 0;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   background: rgba(11, 15, 25, 0.94);
-  border: 1px solid rgba(16, 185, 129, 0.5);
-  color: #34d399;
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  color: #fca5a5;
   font-family: var(--lp-mono);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 4px;
+  padding: 1px 5px;
+  border-radius: 3px;
   white-space: nowrap;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-
-.lp-cuboid-tag.tag-amber {
-  border-color: rgba(251, 191, 36, 0.5);
-  color: #fbbf24;
-}
-
-.lp-cuboid-tag.tag-cyan {
-  border-color: rgba(56, 189, 248, 0.5);
-  color: #38bdf8;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
 }
 
 .tag-conf {
   background: rgba(255, 255, 255, 0.15);
-  padding: 0 4px;
-  border-radius: 3px;
-  font-size: 9px;
+  padding: 0 3px;
+  border-radius: 2px;
+  font-size: 8px;
+  color: #38bdf8;
 }
 
-/* 3D Laser Projection Stems Linking Exploded Layers */
+/* Exact vehicle positions matching demo_lidar_bev.png (608x608 coordinates) */
+.cuboid-car-1 {
+  left: 64.5%;
+  top: 32.8%;
+  width: 22px;
+  height: 53px;
+  transform: translate(-50%, -50%) rotate(19.6deg);
+}
+
+.cuboid-car-2 {
+  left: 66.9%;
+  top: 59.6%;
+  width: 22px;
+  height: 34px;
+  transform: translate(-50%, -50%) rotate(16.1deg);
+}
+
+.cuboid-car-3 {
+  left: 52.0%;
+  top: 70.7%;
+  width: 22px;
+  height: 46px;
+  transform: translate(-50%, -50%) rotate(17.1deg);
+}
+
+.cuboid-car-4 {
+  left: 47.7%;
+  top: 83.6%;
+  width: 21px;
+  height: 46px;
+  transform: translate(-50%, -50%) rotate(18.1deg);
+}
+
+.cuboid-car-5 {
+  left: 57.6%;
+  top: 87.3%;
+  width: 20px;
+  height: 40px;
+  transform: translate(-50%, -50%) rotate(12.0deg);
+}
+
+.cuboid-car-6 {
+  left: 44.9%;
+  top: 91.5%;
+  width: 24px;
+  height: 63px;
+  transform: translate(-50%, -50%) rotate(22.8deg);
+}
+
+/* 3D Laser Projection Stems Linking Exploded Layers to Points */
 .lp-projection-stem {
   position: absolute;
   width: 1.5px;
   pointer-events: none;
-  background: linear-gradient(to bottom, rgba(56, 189, 248, 0.8), rgba(16, 185, 129, 0.3), transparent);
-  box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+  background: linear-gradient(to bottom, rgba(56, 189, 248, 0.8), rgba(239, 68, 68, 0.4), transparent);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.35s ease;
 }
 
 .mode-exploded .lp-projection-stem {
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
 .stem-1 {
-  left: 58%;
-  top: 38%;
-  height: 120px;
+  left: 64.5%;
+  top: 32.8%;
+  height: 110px;
   transform: rotateZ(35deg) translateY(-20px);
 }
 
 .stem-2 {
-  left: 60%;
-  top: 58%;
+  left: 66.9%;
+  top: 59.6%;
   height: 110px;
   transform: rotateZ(35deg) translateY(-20px);
 }
 
 .stem-3 {
-  left: 51%;
-  top: 74%;
+  left: 52.0%;
+  top: 70.7%;
+  height: 110px;
+  transform: rotateZ(35deg) translateY(-20px);
+}
+
+.stem-4 {
+  left: 47.7%;
+  top: 83.6%;
+  height: 110px;
+  transform: rotateZ(35deg) translateY(-20px);
+}
+
+.stem-5 {
+  left: 57.6%;
+  top: 87.3%;
+  height: 110px;
+  transform: rotateZ(35deg) translateY(-20px);
+}
+
+.stem-6 {
+  left: 44.9%;
+  top: 91.5%;
   height: 110px;
   transform: rotateZ(35deg) translateY(-20px);
 }
