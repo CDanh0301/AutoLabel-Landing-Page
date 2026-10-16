@@ -1,33 +1,46 @@
 <!DOCTYPE html>
 <html lang="vi" data-theme="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AutoLabel 3D — Gán nhãn tự động 2D & 3D LiDAR cho Xe tự lái</title>
-  <meta name="description" content="Nền tảng tự động gán nhãn AI cho xe tự lái và robotics: Camera 2D + 3D LiDAR, QA Agent kiểm chứng đa tín hiệu và quy trình Review by Exception tối ưu hóa tốc độ.">
+  <meta name="description"
+    content="Nền tảng tự động gán nhãn AI cho xe tự lái và robotics: Camera 2D + 3D LiDAR, QA Agent kiểm chứng đa tín hiệu và quy trình Review by Exception tối ưu hóa tốc độ.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-  <link rel="stylesheet" href="landing.css?v=2.0">
+  <link rel="stylesheet" href="landing.css?v=2.1">
   <script>
     // Khởi tạo theme tức thì trước khi render để tránh chớp màn hình (FOUC)
-    (function() {
+    (function () {
       try {
         var t = localStorage.getItem('autolabel_theme');
         if (!t) {
           t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
         document.documentElement.setAttribute('data-theme', t);
-      } catch (e) {}
+      } catch (e) { }
     })();
   </script>
 </head>
+
 <body class="lp-body">
 
-  <!-- Background Ambient Glow -->
+  <!-- Scroll Progress Indicator -->
+  <div class="lp-scroll-progress-bar" id="lpScrollProgress"></div>
+
+  <!-- Background Ambient Glow & Floating Light Orbs -->
   <div class="lp-bg-glow"></div>
+  <div class="lp-floating-orbs">
+    <div class="lp-ambient-orb lp-orb-1"></div>
+    <div class="lp-ambient-orb lp-orb-2"></div>
+    <div class="lp-ambient-orb lp-orb-3"></div>
+  </div>
+  <div class="lp-cyber-grid"></div>
 
   <!-- Header / Navigation -->
   <header class="lp-header header">
@@ -46,14 +59,17 @@
           <li><a href="#how-it-works" class="lp-nav-link">Quy trình</a></li>
           <li><a href="#review-exception" class="lp-nav-link">Duyệt rủi ro</a></li>
           <li><a href="#specs" class="lp-nav-link">Định dạng</a></li>
-          <li><a href="https://web-production-2ab01.up.railway.app/ui/projects.html" target="_blank" rel="noopener noreferrer" class="lp-nav-link">Dự án</a></li>
+          <li><a href="https://web-production-2ab01.up.railway.app/ui/projects.html" target="_blank"
+              rel="noopener noreferrer" class="lp-nav-link">Dự án</a></li>
         </ul>
 
         <div class="lp-nav-actions header-right">
           <!-- Nút chuyển chế độ Sáng / Tối độc lập -->
-          <button class="theme-toggle-btn" id="landingThemeBtn" type="button" aria-label="Chuyển chế độ Sáng / Tối"></button>
+          <button class="theme-toggle-btn" id="landingThemeBtn" type="button"
+            aria-label="Chuyển chế độ Sáng / Tối"></button>
 
-          <a href="https://web-production-2ab01.up.railway.app/ui/login.html" target="_blank" rel="noopener noreferrer" class="lp-btn lp-btn-ghost" id="lpUserNav">
+          <a href="https://web-production-2ab01.up.railway.app/ui/login.html" target="_blank" rel="noopener noreferrer"
+            class="lp-btn lp-btn-ghost" id="lpUserNav">
             <i class="ri-user-line"></i>
             <span>Đăng nhập</span>
           </a>
@@ -79,12 +95,14 @@
 
       <!-- Subtitle -->
       <p class="lp-hero-sub">
-        Nền tảng tự động gán nhãn 2D Camera & 3D LiDAR cho xe tự lái. AI gán nhãn trước, QA Agent tự lọc rủi ro, kỹ sư chỉ cần duyệt số ít ca bất thường.
+        Nền tảng tự động gán nhãn 2D Camera & 3D LiDAR cho xe tự lái. AI gán nhãn trước, QA Agent tự lọc rủi ro, kỹ sư
+        chỉ cần duyệt số ít ca bất thường.
       </p>
 
       <!-- CTA Buttons -->
       <div class="lp-hero-ctas">
-        <a href="https://web-production-2ab01.up.railway.app/ui/projects.html" target="_blank" rel="noopener noreferrer" class="lp-btn lp-btn-primary lp-btn-lg">
+        <a href="https://web-production-2ab01.up.railway.app/ui/projects.html" target="_blank" rel="noopener noreferrer"
+          class="lp-btn lp-btn-primary lp-btn-lg">
           <i class="ri-rocket-line"></i>
           <span>Khám phá Workspace</span>
           <i class="ri-arrow-right-line"></i>
@@ -144,14 +162,71 @@
             <!-- VIEW 1: 3D LiDAR BEV -->
             <div class="lp-mock-view active" id="view-bev">
               <div class="lp-bev-canvas">
+                <!-- Concentric Polar Radar Rings -->
+                <div class="lp-lidar-radar-rings"></div>
+                <!-- Sweeping Laser Scan Beam -->
+                <div class="lp-lidar-sweep-beam"></div>
+
+                <!-- Base Point Cloud Image -->
                 <img src="demo_lidar_bev.png" alt="LiDAR 3D Point Cloud BEV" class="lp-lidar-img">
+
+                <!-- Interactive 3D Bounding Box Overlay 1 (Car #104) -->
+                <div class="lp-target-overlay lp-bev-target-1" title="Đối tượng xe hơi được AI khoanh vùng 3D">
+                  <div class="lp-target-box-3d">
+                    <div class="lp-target-heading-arrow"></div>
+                    <div class="lp-target-corner lp-corner-tl"></div>
+                    <div class="lp-target-corner lp-corner-tr"></div>
+                    <div class="lp-target-corner lp-corner-bl"></div>
+                    <div class="lp-target-corner lp-corner-br"></div>
+                  </div>
+                  <div class="lp-target-pill">Car #104 • 186 pts • 0.94</div>
+                </div>
+
+                <!-- Interactive 3D Bounding Box Overlay 2 (Truck #108) -->
+                <div class="lp-target-overlay lp-bev-target-2" title="Đối tượng xe tải kiểm chứng đa frame">
+                  <div class="lp-target-box-3d lp-target-box-amber">
+                    <div class="lp-target-heading-arrow"></div>
+                  </div>
+                  <div class="lp-target-pill lp-target-pill-amber">Truck #108 • 340 pts • 0.91</div>
+                </div>
+
+                <!-- Telemetry HUD Footer -->
+                <div class="lp-bev-hud">
+                  <div class="lp-hud-chip"><span class="lp-hud-pulse"></span> LiDAR OS2-128 • 10Hz</div>
+                  <div class="lp-hud-chip">124,800 Points/s</div>
+                  <div class="lp-hud-chip lp-bev-tag">BEVFusion Sync: &lt;2.1ms</div>
+                  <div class="lp-hud-status">🟢 18 Tracks Active</div>
+                </div>
               </div>
             </div>
 
             <!-- VIEW 2: Camera 2D Fusion -->
             <div class="lp-mock-view" id="view-cam">
               <div class="lp-cam-view">
+                <!-- Vertical Detection Scanner Beam -->
+                <div class="lp-cam-scanner-line"></div>
+
+                <!-- Base Camera 2D Image -->
                 <img src="demo_camera_2d.png" alt="Camera 2D Annotations" class="lp-cam-img">
+
+                <!-- Interactive 2D Bounding Box Overlay -->
+                <div class="lp-target-overlay lp-cam-target-1" title="Camera 2D Bounding Box tự động YOLOE-26L">
+                  <div class="lp-cam-bbox">
+                    <div class="lp-corner lp-corner-tl"></div>
+                    <div class="lp-corner lp-corner-tr"></div>
+                    <div class="lp-corner lp-corner-bl"></div>
+                    <div class="lp-corner lp-corner-br"></div>
+                  </div>
+                  <div class="lp-target-pill">[Car #104 | 94% | YOLOE-26L]</div>
+                </div>
+
+                <!-- Telemetry HUD Footer -->
+                <div class="lp-cam-hud">
+                  <div class="lp-hud-chip"><span class="lp-hud-pulse"></span> Camera Front-Wide 1080p</div>
+                  <div class="lp-hud-chip">Auto-Exposure • 30 FPS</div>
+                  <div class="lp-hud-chip lp-bev-tag">SAM 2.1 Assisted</div>
+                  <div class="lp-hud-status">🟢 Calib Aligned</div>
+                </div>
               </div>
             </div>
 
@@ -161,42 +236,67 @@
                 <div class="lp-qa-header">
                   <div class="lp-qa-title">
                     <i class="ri-cpu-line" style="color: #3b82f6;"></i>
-                    <span>LangGraph QA Agent — Kiểm chứng đối tượng #box-car-104</span>
+                    <span>Kiểm chứng đối tượng #box-car-104</span>
                   </div>
-                  <span class="lp-qa-status-pill lp-status-ok">Đạt chuẩn kiểm chứng</span>
+                  <span class="lp-qa-status-pill lp-status-ok"><span class="lp-hud-pulse" style="display:inline-block; margin-right:4px;"></span> Đạt chuẩn kiểm chứng</span>
                 </div>
 
                 <div class="lp-qa-grid">
                   <div class="lp-qa-card">
                     <div class="lp-qa-card-head">
                       <span>1. Confidence Model</span>
-                      <span class="lp-qa-status-pill lp-status-ok">TỐT</span>
+                      <span class="lp-qa-status-pill lp-status-ok">TỐT (0.94)</span>
                     </div>
-                    <div class="lp-qa-card-val">0.94 <span style="font-size: 12px; color: #94a3b8; font-weight: normal;">(YOLOE-26L + BEVFusion)</span></div>
+                    <div class="lp-qa-card-val">0.94 <span
+                        style="font-size: 12px; color: #94a3b8; font-weight: normal;">(YOLOE-26L + BEVFusion)</span>
+                    </div>
+                    <div class="lp-qa-progress-wrap">
+                      <div class="lp-qa-progress-track">
+                        <div class="lp-qa-progress-fill lp-fill-conf" style="width: 94%;"></div>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="lp-qa-card">
                     <div class="lp-qa-card-head">
                       <span>2. LiDAR Support</span>
-                      <span class="lp-qa-status-pill lp-status-ok">TỐT</span>
+                      <span class="lp-qa-status-pill lp-status-ok">TỐT (186 pts)</span>
                     </div>
-                    <div class="lp-qa-card-val">186 điểm <span style="font-size: 12px; color: #94a3b8; font-weight: normal;">(Không bị rỗng)</span></div>
+                    <div class="lp-qa-card-val">186 điểm <span
+                        style="font-size: 12px; color: #94a3b8; font-weight: normal;">(Không bị rỗng)</span></div>
+                    <div class="lp-qa-progress-wrap">
+                      <div class="lp-qa-progress-track">
+                        <div class="lp-qa-progress-fill lp-fill-lidar" style="width: 88%;"></div>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="lp-qa-card">
                     <div class="lp-qa-card-head">
                       <span>3. Temporal Tracking</span>
-                      <span class="lp-qa-status-pill lp-status-ok">TỐT</span>
+                      <span class="lp-qa-status-pill lp-status-ok">TỐT (100%)</span>
                     </div>
-                    <div class="lp-qa-card-val">Nhất quán <span style="font-size: 12px; color: #94a3b8; font-weight: normal;">(Frame t-2 đến t+2)</span></div>
+                    <div class="lp-qa-card-val">Nhất quán <span
+                        style="font-size: 12px; color: #94a3b8; font-weight: normal;">(Frame t-2 đến t+2)</span></div>
+                    <div class="lp-qa-progress-wrap">
+                      <div class="lp-qa-progress-track">
+                        <div class="lp-qa-progress-fill lp-fill-track" style="width: 96%;"></div>
+                      </div>
+                    </div>
                   </div>
 
                   <div class="lp-qa-card">
                     <div class="lp-qa-card-head">
                       <span>4. Geometric Sanity</span>
-                      <span class="lp-qa-status-pill lp-status-ok">TỐT</span>
+                      <span class="lp-qa-status-pill lp-status-ok">TỐT (Khớp 3D)</span>
                     </div>
-                    <div class="lp-qa-card-val">4.5 × 1.8 × 1.5m <span style="font-size: 12px; color: #94a3b8; font-weight: normal;">(Kích thước chuẩn)</span></div>
+                    <div class="lp-qa-card-val">4.5 × 1.8 × 1.5m <span
+                        style="font-size: 12px; color: #94a3b8; font-weight: normal;">(Kích thước chuẩn)</span></div>
+                    <div class="lp-qa-progress-wrap">
+                      <div class="lp-qa-progress-track">
+                        <div class="lp-qa-progress-fill lp-fill-geom" style="width: 95%;"></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -205,7 +305,8 @@
                     <i class="ri-checkbox-circle-fill" style="color: #34d399; font-size: 24px;"></i>
                     <div>
                       <div class="lp-qa-decision-text">Công thức: risk = 0.60·(1 - conf) + 0.25·lidar + 0.15·geom</div>
-                      <div class="lp-qa-decision-sub">Chỉ số rủi ro tính toán: <b style="color: var(--lp-accent-green);">&lt; 0.17 (0.06)</b></div>
+                      <div class="lp-qa-decision-sub">Chỉ số rủi ro tính toán: <b
+                          style="color: var(--lp-accent-green);">&lt; 0.17 (0.06)</b></div>
                     </div>
                   </div>
                   <div class="lp-qa-verdict-badge lp-verdict-low">
@@ -223,17 +324,18 @@
   <!-- Section 1: Why It Matters -->
   <section class="lp-section" id="features">
     <div class="lp-container">
-      <div class="lp-section-header">
+      <div class="lp-section-header lp-reveal">
         <span class="lp-section-pill">GIẢI PHÁP ĐỘT PHÁ</span>
         <h2 class="lp-section-title">90% thời gian gán nhãn truyền thống bị lãng phí vào các box quá dễ.</h2>
         <p class="lp-section-desc">
-          AutoLabel 3D đảo ngược quy trình: AI làm trước phần việc lặp lại, QA Agent thẩm định chất lượng, người dùng chỉ can thiệp vào các tình huống ngoại lệ.
+          AutoLabel 3D đảo ngược quy trình: AI làm trước phần việc lặp lại, QA Agent thẩm định chất lượng, người dùng
+          chỉ can thiệp vào các tình huống ngoại lệ.
         </p>
       </div>
 
       <div class="lp-grid-3">
         <!-- Card 1: Review by Exception (Tia sét 3D + Bounding Box phân tầng chuyển động) -->
-        <div class="lp-card">
+        <div class="lp-card lp-reveal lp-reveal-delay-1">
           <div class="lp-card-icon-3d lp-3d-flash">
             <div class="lp-3d-glow lp-glow-cyan"></div>
             <div class="lp-3d-symbol lp-3d-symbol-flash" aria-label="Review by Exception">
@@ -247,12 +349,13 @@
           </div>
           <h3 class="lp-card-title">Review by Exception</h3>
           <p class="lp-card-desc">
-            Không cần kiểm tra 100% dữ liệu một cách tẻ nhạt. Hệ thống tự động xếp hạng mức độ rủi ro và gom nhóm box an toàn để duyệt hàng loạt chỉ trong một cú nhấp chuột.
+            Không cần kiểm tra 100% dữ liệu một cách tẻ nhạt. Hệ thống tự động xếp hạng mức độ rủi ro và gom nhóm box an
+            toàn để duyệt hàng loạt chỉ trong một cú nhấp chuột.
           </p>
         </div>
 
         <!-- Card 2: QA Agent 4 Trụ Cột (Khiên an ninh 3D bảo mật đa lớp + Vành đai Radar quét) -->
-        <div class="lp-card">
+        <div class="lp-card lp-reveal lp-reveal-delay-2">
           <div class="lp-card-icon-3d lp-3d-shield">
             <div class="lp-3d-glow lp-glow-purple"></div>
             <div class="lp-3d-symbol lp-3d-symbol-shield" aria-label="QA Agent 4 Trụ Cột">
@@ -266,12 +369,13 @@
           </div>
           <h3 class="lp-card-title">QA Agent 4 Trụ Cột</h3>
           <p class="lp-card-desc">
-            LangGraph Agent kiểm chứng chéo từng box qua độ tự tin mô hình, phản hồi điểm LiDAR, tính ổn định chuỗi thời gian và tỷ lệ hình học thực tế.
+            Agent kiểm chứng chéo từng box qua độ tự tin mô hình, phản hồi điểm LiDAR, tính ổn định chuỗi thời
+            gian và tỷ lệ hình học thực tế.
           </p>
         </div>
 
         <!-- Card 3: Lan Truyền Nhãn Thông Minh (Mạng đồ thị nút 3D kết nối luồng lan truyền) -->
-        <div class="lp-card">
+        <div class="lp-card lp-reveal lp-reveal-delay-3">
           <div class="lp-card-icon-3d lp-3d-merge">
             <div class="lp-3d-glow lp-glow-blue"></div>
             <div class="lp-3d-symbol lp-3d-symbol-nodes" aria-label="Lan Truyền Nhãn Thông Minh">
@@ -286,7 +390,8 @@
           </div>
           <h3 class="lp-card-title">Lan Truyền Nhãn Thông Minh</h3>
           <p class="lp-card-desc">
-            Sau khi duyệt một keyframe, các nhãn đã chuẩn hóa tự động lan truyền sang các frame tiếp theo nhờ Optical Flow và vận tốc 3D Ego-pose.
+            Sau khi duyệt một keyframe, các nhãn đã chuẩn hóa tự động lan truyền sang các frame tiếp theo nhờ Optical
+            Flow và vận tốc 3D Ego-pose.
           </p>
         </div>
       </div>
@@ -296,7 +401,7 @@
   <!-- Section 2: How It Works -->
   <section class="lp-section lp-section-compact" id="how-it-works" style="background: var(--lp-bg-subtle);">
     <div class="lp-container">
-      <div class="lp-section-header">
+      <div class="lp-section-header lp-reveal">
         <span class="lp-section-pill">QUY TRÌNH TINH GỌN</span>
         <h2 class="lp-section-title">Từ cảm biến thô đến tập nhãn sẵn sàng huấn luyện</h2>
         <p class="lp-section-desc">
@@ -305,32 +410,38 @@
       </div>
 
       <div class="lp-steps-container">
+        <!-- Connecting Data Flow Line between steps -->
+        <div class="lp-steps-connector-line"></div>
+
         <!-- Step 1 -->
-        <div class="lp-step-card">
+        <div class="lp-step-card lp-reveal lp-reveal-delay-1">
           <span class="lp-step-num">BƯỚC 01</span>
           <h3 class="lp-step-title">Nạp dữ liệu đa phương thức</h3>
           <p class="lp-step-text">
-            Tải lên video MP4, chuỗi ảnh hoặc trọn gói dataset LiDAR + Camera (nuScenes, KITTI). Hệ thống tự cắt keyframe và đồng bộ toạ độ cảm biến.
+            Tải lên video MP4, chuỗi ảnh hoặc trọn gói dataset LiDAR + Camera (nuScenes, KITTI). Hệ thống tự cắt
+            keyframe và đồng bộ toạ độ cảm biến.
           </p>
           <span class="lp-step-tag"><i class="ri-upload-cloud-line"></i> Ingest Pipeline</span>
         </div>
 
         <!-- Step 2 -->
-        <div class="lp-step-card">
+        <div class="lp-step-card lp-reveal lp-reveal-delay-2">
           <span class="lp-step-num">BƯỚC 02</span>
           <h3 class="lp-step-title">AI Dựng box & Chấm rủi ro</h3>
           <p class="lp-step-text">
-            YOLOE-26L và BEVFusion tự động tạo box 2D/3D. QA Agent phân tích đa tín hiệu và phân loại rủi ro: Low (&lt; 0.17), Medium và High.
+            YOLOE-26L và BEVFusion tự động tạo box 2D/3D. QA Agent phân tích đa tín hiệu và phân loại rủi ro: Low (&lt;
+            0.17), Medium và High.
           </p>
           <span class="lp-step-tag"><i class="ri-cpu-line"></i> Multi-Signal QA</span>
         </div>
 
         <!-- Step 3 -->
-        <div class="lp-step-card">
+        <div class="lp-step-card lp-reveal lp-reveal-delay-3">
           <span class="lp-step-num">BƯỚC 03</span>
           <h3 class="lp-step-title">Duyệt nhanh & Xuất chuẩn</h3>
           <p class="lp-step-text">
-            Duyệt hàng loạt box an toàn, tinh chỉnh box cảnh báo với công cụ SAM 2.1 (✨ Chọn vật), sau đó xuất chuẩn COCO, nuScenes, Waymo.
+            Duyệt hàng loạt box an toàn, tinh chỉnh box cảnh báo với công cụ SAM 2.1 (✨ Chọn vật), sau đó xuất chuẩn
+            COCO, nuScenes, Waymo.
           </p>
           <span class="lp-step-tag"><i class="ri-file-download-line"></i> Ready for Training</span>
         </div>
@@ -341,7 +452,7 @@
   <!-- Section 3: Review by Exception -->
   <section class="lp-section" id="review-exception">
     <div class="lp-container">
-      <div class="lp-section-header">
+      <div class="lp-section-header lp-reveal">
         <span class="lp-section-pill">CƠ CHẾ PHÂN TẦNG</span>
         <h2 class="lp-section-title">Phân loại rủi ro thông minh</h2>
         <p class="lp-section-desc">
@@ -351,7 +462,7 @@
 
       <div class="lp-risk-grid">
         <!-- Low Risk -->
-        <div class="lp-risk-card lp-risk-low">
+        <div class="lp-risk-card lp-risk-low lp-reveal lp-reveal-delay-1">
           <div class="lp-risk-header">
             <span class="lp-risk-pill lp-pill-low">RỦI RO THẤP</span>
             <span class="lp-risk-threshold">Risk &lt; 0.17</span>
@@ -367,7 +478,7 @@
         </div>
 
         <!-- Medium Risk -->
-        <div class="lp-risk-card lp-risk-med">
+        <div class="lp-risk-card lp-risk-med lp-reveal lp-reveal-delay-2">
           <div class="lp-risk-header">
             <span class="lp-risk-pill lp-pill-med">RỦI RO VỪA</span>
             <span class="lp-risk-threshold">0.17 ≤ Risk &lt; 0.40</span>
@@ -383,18 +494,106 @@
         </div>
 
         <!-- High Risk -->
-        <div class="lp-risk-card lp-risk-high">
+        <div class="lp-risk-card lp-risk-high lp-reveal lp-reveal-delay-3">
           <div class="lp-risk-header">
             <span class="lp-risk-pill lp-pill-high">RỦI RO CAO</span>
             <span class="lp-risk-threshold">Risk ≥ 0.40</span>
           </div>
           <h3 class="lp-risk-title">Hàng đợi ưu tiên can thiệp</h3>
           <p class="lp-risk-desc">
-            Xung đột lớp nhãn, kích thước bất thường hoặc hiện tượng chập chờn (flicker). Đưa lên đầu danh sách để sửa kỹ.
+            Xung đột lớp nhãn, kích thước bất thường hoặc hiện tượng chập chờn (flicker). Đưa lên đầu danh sách để sửa
+            kỹ.
           </p>
           <div class="lp-risk-action">
             <i class="ri-alert-line" style="color: var(--lp-accent-red);"></i>
             <span>Sửa box / Đổi lớp / Giữ / Xóa</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Interactive QA Risk Formula Simulator Widget -->
+      <div class="lp-risk-simulator lp-reveal">
+        <div class="lp-sim-header">
+          <div class="lp-sim-title-wrap">
+            <div class="lp-sim-icon"><i class="ri-equalizer-line"></i></div>
+            <div>
+              <h3 class="lp-sim-title">Trực quan hoá thuật toán QA Agent thời gian thực</h3>
+              <p class="lp-sim-sub">Kéo các thanh trượt bên dưới để xem thuật toán tự động tính điểm rủi ro và ra quyết định duyệt.</p>
+            </div>
+          </div>
+          <div class="lp-sim-badge tier-low" id="simRiskBadge">
+            <span class="lp-sim-dot"></span>
+            <span id="simVerdictText">RỦI RO THẤP — BULK APPROVE (1-CLICK)</span>
+          </div>
+        </div>
+
+        <div class="lp-sim-body">
+          <div class="lp-sim-controls">
+            <!-- Control 1 -->
+            <div class="lp-sim-control-group">
+              <div class="lp-sim-label-row">
+                <label for="simConf">1. Độ tự tin mô hình (Model Confidence)</label>
+                <span class="lp-sim-val" id="simConfVal">0.94 (YOLOE-26L)</span>
+              </div>
+              <input type="range" id="simConf" min="0.10" max="1.00" step="0.01" value="0.94" class="lp-sim-slider">
+              <div class="lp-sim-range-hints">
+                <span>0.10 (Mơ hồ)</span>
+                <span>0.50</span>
+                <span>1.00 (Chắc chắn)</span>
+              </div>
+            </div>
+
+            <!-- Control 2 -->
+            <div class="lp-sim-control-group">
+              <div class="lp-sim-label-row">
+                <label for="simLidar">2. Mật độ phản xạ LiDAR (Point Cloud Support)</label>
+                <span class="lp-sim-val" id="simLidarVal">186 điểm (Đầy đủ)</span>
+              </div>
+              <input type="range" id="simLidar" min="0" max="100" step="1" value="88" class="lp-sim-slider">
+              <div class="lp-sim-range-hints">
+                <span>0 pts (Rỗng / Ghost)</span>
+                <span>50 pts</span>
+                <span>200+ pts (Rõ ràng)</span>
+              </div>
+            </div>
+
+            <!-- Control 3 -->
+            <div class="lp-sim-control-group">
+              <div class="lp-sim-label-row">
+                <label for="simGeom">3. Tính ổn định hình học & Tracking (Temporal & Sanity)</label>
+                <span class="lp-sim-val" id="simGeomVal">Khớp chuẩn 3D (0.95)</span>
+              </div>
+              <input type="range" id="simGeom" min="0" max="100" step="1" value="95" class="lp-sim-slider">
+              <div class="lp-sim-range-hints">
+                <span>Méo / Chập chờn</span>
+                <span>Bình thường</span>
+                <span>Chuẩn tỷ lệ xe</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lp-sim-result-card">
+            <div class="lp-sim-score-box">
+              <div class="lp-sim-score-label">Chỉ số rủi ro tính toán (Risk Score)</div>
+              <div class="lp-sim-score-num" id="simScoreNum">0.07</div>
+              <div class="lp-sim-formula">risk = 0.60·(1 - conf) + 0.25·(1 - lidar) + 0.15·(1 - geom)</div>
+            </div>
+
+            <div class="lp-sim-meter-wrap">
+              <div class="lp-sim-meter-track">
+                <div class="lp-sim-meter-marker" id="simMeterMarker" style="left: 7%;"></div>
+              </div>
+              <div class="lp-sim-meter-zones">
+                <span class="zone-low">🟢 Thấp (&lt; 0.17)</span>
+                <span class="zone-med">🟡 Vừa (0.17 - 0.40)</span>
+                <span class="zone-high">🔴 Cao (&ge; 0.40)</span>
+              </div>
+            </div>
+
+            <div class="lp-sim-action-hint" id="simActionHint">
+              <i class="ri-checkbox-circle-fill"></i>
+              <span id="simActionText">Box đạt kiểm chứng an toàn cao. Hệ thống tự động đưa vào <b>Duyệt cả loạt (Bulk Approve)</b>.</span>
+            </div>
           </div>
         </div>
       </div>
@@ -404,7 +603,7 @@
   <!-- Section 4: Tech & Specs Grid -->
   <section class="lp-section lp-section-compact" id="specs" style="background: var(--lp-bg-subtle);">
     <div class="lp-container">
-      <div class="lp-section-header">
+      <div class="lp-section-header lp-reveal">
         <span class="lp-section-pill">TIÊU CHUẨN CÔNG NGHỆ</span>
         <h2 class="lp-section-title">Kiến trúc sẵn sàng cho quy mô công nghiệp</h2>
         <p class="lp-section-desc">
@@ -414,7 +613,7 @@
 
       <div class="lp-grid-4">
         <!-- Spec 1: Mô hình Hiện đại (Khối não bộ AI 3D phát sáng + Synapse luân chuyển) -->
-        <div class="lp-spec-card">
+        <div class="lp-spec-card lp-reveal lp-reveal-delay-1">
           <div class="lp-card-icon-3d lp-3d-model">
             <div class="lp-3d-glow lp-glow-blue"></div>
             <div class="lp-3d-symbol lp-3d-symbol-brain" aria-label="Mô hình Hiện đại">
@@ -429,7 +628,7 @@
         </div>
 
         <!-- Spec 2: Bảo mật & Quyền riêng tư (Ổ khóa an ninh 3D đóng mở + Khiên quét) -->
-        <div class="lp-spec-card">
+        <div class="lp-spec-card lp-reveal lp-reveal-delay-2">
           <div class="lp-card-icon-3d lp-3d-lock">
             <div class="lp-3d-glow lp-glow-cyan"></div>
             <div class="lp-3d-symbol lp-3d-symbol-lock" aria-label="Bảo mật & Quyền riêng tư">
@@ -440,11 +639,12 @@
             </div>
           </div>
           <h4 class="lp-spec-title">Bảo mật & Quyền riêng tư</h4>
-          <p class="lp-spec-text">Tự động làm mờ khuôn mặt và biển số xe trước khi hiển thị. Chạy nội bộ (On-premise).</p>
+          <p class="lp-spec-text">Tự động làm mờ khuôn mặt và biển số xe trước khi hiển thị. Chạy nội bộ (On-premise).
+          </p>
         </div>
 
         <!-- Spec 3: Xuất Chuẩn Đa Dạng (Tệp dữ liệu 3D phân tầng lơ lửng + Mũi tên trích xuất) -->
-        <div class="lp-spec-card">
+        <div class="lp-spec-card lp-reveal lp-reveal-delay-3">
           <div class="lp-card-icon-3d lp-3d-export">
             <div class="lp-3d-glow lp-glow-purple"></div>
             <div class="lp-3d-symbol lp-3d-symbol-export" aria-label="Xuất Chuẩn Đa Dạng">
@@ -455,11 +655,12 @@
             </div>
           </div>
           <h4 class="lp-spec-title">Xuất Chuẩn Đa Dạng</h4>
-          <p class="lp-spec-text">Hỗ trợ COCO JSON (2D), bảng dữ liệu nuScenes, KITTI 3D labels và Waymo Open Dataset v2.</p>
+          <p class="lp-spec-text">Hỗ trợ COCO JSON (2D), bảng dữ liệu nuScenes, KITTI 3D labels và Waymo Open Dataset
+            v2.</p>
         </div>
 
         <!-- Spec 4: Audit Log Minh Bạch (Đồng hồ / Vòng quay lịch sử 3D với con trỏ thời gian) -->
-        <div class="lp-spec-card">
+        <div class="lp-spec-card lp-reveal lp-reveal-delay-4">
           <div class="lp-card-icon-3d lp-3d-audit">
             <div class="lp-3d-glow lp-glow-emerald"></div>
             <div class="lp-3d-symbol lp-3d-symbol-audit" aria-label="Audit Log Minh Bạch">
@@ -470,7 +671,8 @@
             </div>
           </div>
           <h4 class="lp-spec-title">Audit Log Minh Bạch</h4>
-          <p class="lp-spec-text">Mỗi thao tác ghi lại một dòng JSONL chi tiết. Checklist READY kiểm tra tự động trước khi xuất.</p>
+          <p class="lp-spec-text">Mỗi thao tác ghi lại một dòng JSONL chi tiết. Checklist READY kiểm tra tự động trước
+            khi xuất.</p>
         </div>
       </div>
     </div>
@@ -479,13 +681,13 @@
   <!-- Metrics Showcase -->
   <section class="lp-section">
     <div class="lp-container">
-      <div class="lp-metrics-strip">
+      <div class="lp-metrics-strip lp-reveal">
         <div class="lp-metric-item">
-          <div class="lp-metric-val">10x</div>
+          <div class="lp-metric-val" data-counter-target="10" data-counter-suffix="x">10x</div>
           <div class="lp-metric-label">Tốc độ chuẩn bị dữ liệu</div>
         </div>
         <div class="lp-metric-item">
-          <div class="lp-metric-val">95%</div>
+          <div class="lp-metric-val" data-counter-target="95" data-counter-suffix="%">95%</div>
           <div class="lp-metric-label">Tỷ lệ phát hiện lỗi sai</div>
         </div>
         <div class="lp-metric-item">
@@ -493,7 +695,7 @@
           <div class="lp-metric-label">Ngưỡng rủi ro duyệt tự động</div>
         </div>
         <div class="lp-metric-item">
-          <div class="lp-metric-val">100%</div>
+          <div class="lp-metric-val" data-counter-target="100" data-counter-suffix="%">100%</div>
           <div class="lp-metric-label">Dữ liệu kiểm soát hoàn toàn</div>
         </div>
       </div>
@@ -503,17 +705,20 @@
   <!-- Bottom CTA Banner -->
   <section class="lp-section lp-section-compact">
     <div class="lp-container">
-      <div class="lp-cta-card">
+      <div class="lp-cta-card lp-reveal">
         <h2 class="lp-cta-title">Tối ưu hóa dữ liệu huấn luyện xe tự lái ngay hôm nay.</h2>
         <p class="lp-cta-sub">
-          Bắt đầu tạo dự án đầu tiên chỉ trong vài phút. Trải nghiệm tốc độ gán nhãn đột phá với sự trợ giúp của AI và QA Agent.
+          Bắt đầu tạo dự án đầu tiên chỉ trong vài phút. Trải nghiệm tốc độ gán nhãn đột phá với sự trợ giúp của AI và
+          QA Agent.
         </p>
         <div class="lp-cta-actions">
-          <a href="https://web-production-2ab01.up.railway.app/ui/projects.html" target="_blank" rel="noopener noreferrer" class="lp-btn lp-btn-primary lp-btn-lg">
+          <a href="https://web-production-2ab01.up.railway.app/ui/projects.html" target="_blank"
+            rel="noopener noreferrer" class="lp-btn lp-btn-primary lp-btn-lg">
             <i class="ri-add-line"></i>
             <span>Tạo dự án mới</span>
           </a>
-          <a href="https://web-production-2ab01.up.railway.app/ui/login.html" target="_blank" rel="noopener noreferrer" class="lp-btn lp-btn-secondary lp-btn-lg">
+          <a href="https://web-production-2ab01.up.railway.app/ui/login.html" target="_blank" rel="noopener noreferrer"
+            class="lp-btn lp-btn-secondary lp-btn-lg">
             <i class="ri-user-follow-line"></i>
             <span>Đăng nhập hệ thống</span>
           </a>
@@ -535,17 +740,22 @@
             <span class="lp-brand-badge">3D</span>
           </a>
           <p>
-            Nền tảng Auto-label ảnh + LiDAR (2D / 3D), QA Agent đa tín hiệu và quy trình Review by exception cho xe tự lái.
+            Nền tảng Auto-label ảnh + LiDAR (2D / 3D), QA Agent đa tín hiệu và quy trình Review by exception cho xe tự
+            lái.
           </p>
         </div>
 
         <div class="lp-footer-col">
           <h4>Ứng dụng</h4>
           <ul>
-            <li><a href="https://web-production-2ab01.up.railway.app/ui/projects.html" target="_blank" rel="noopener noreferrer">Quản lý dự án</a></li>
-            <li><a href="https://web-production-2ab01.up.railway.app/ui/frames.html" target="_blank" rel="noopener noreferrer">Danh sách Frame</a></li>
-            <li><a href="https://web-production-2ab01.up.railway.app/ui/export.html" target="_blank" rel="noopener noreferrer">Xuất dữ liệu</a></li>
-            <li><a href="https://web-production-2ab01.up.railway.app/ui/login.html" target="_blank" rel="noopener noreferrer">Đăng nhập</a></li>
+            <li><a href="https://web-production-2ab01.up.railway.app/ui/projects.html" target="_blank"
+                rel="noopener noreferrer">Quản lý dự án</a></li>
+            <li><a href="https://web-production-2ab01.up.railway.app/ui/frames.html" target="_blank"
+                rel="noopener noreferrer">Danh sách Frame</a></li>
+            <li><a href="https://web-production-2ab01.up.railway.app/ui/export.html" target="_blank"
+                rel="noopener noreferrer">Xuất dữ liệu</a></li>
+            <li><a href="https://web-production-2ab01.up.railway.app/ui/login.html" target="_blank"
+                rel="noopener noreferrer">Đăng nhập</a></li>
           </ul>
         </div>
 
@@ -564,7 +774,7 @@
 
   <!-- Scripts -->
   <script>
-    // Xử lý chuyển đổi Tab trên Interactive Mockup
+    // 1. Xử lý chuyển đổi Tab trên Interactive Mockup
     (function initMockup() {
       var tabs = document.querySelectorAll('.lp-mockup-tab');
       var views = {
@@ -573,13 +783,13 @@
         qa: document.getElementById('view-qa')
       };
 
-      tabs.forEach(function(tab) {
-        tab.addEventListener('click', function() {
+      tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
           var viewName = this.getAttribute('data-view');
-          tabs.forEach(function(t) { t.classList.remove('active'); });
+          tabs.forEach(function (t) { t.classList.remove('active'); });
           this.classList.add('active');
 
-          Object.keys(views).forEach(function(k) {
+          Object.keys(views).forEach(function (k) {
             if (views[k]) {
               views[k].classList.toggle('active', k === viewName);
             }
@@ -588,10 +798,10 @@
       });
     })();
 
-    // Bộ quản lý chế độ Sáng / Tối độc lập cho Landing Page (GitHub Pages)
+    // 2. Bộ quản lý chế độ Sáng / Tối độc lập cho Landing Page (GitHub Pages)
     (function initThemeToggle() {
       function getTheme() {
-        return localStorage.getItem('autolabel_theme') || 
+        return localStorage.getItem('autolabel_theme') ||
           (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       }
 
@@ -602,24 +812,24 @@
         if (!btn) return;
         btn.setAttribute('aria-label', isDark ? 'Chuyển sang sáng' : 'Chuyển sang tối');
         btn.setAttribute('title', isDark ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối');
-        btn.innerHTML = 
+        btn.innerHTML =
           '<span class="theme-switch-wrap" title="' + (isDark ? 'Chế độ tối (Bấm để chuyển sáng)' : 'Chế độ sáng (Bấm để chuyển tối)') + '">' +
-            '<span style="font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">' +
-              '<i class="' + (isDark ? 'ri-moon-line' : 'ri-sun-line') + '" style="color: ' + (isDark ? '#60a5fa' : '#f59e0b') + ';"></i>' +
-              '<span>' + (isDark ? 'Tối' : 'Sáng') + '</span>' +
-            '</span>' +
-            '<span class="theme-switch" role="switch" aria-checked="' + isDark + '">' +
-              '<span class="theme-switch-thumb">' +
-                '<i class="' + (isDark ? 'ri-moon-fill' : 'ri-sun-fill') + '" style="font-size: 11px;"></i>' +
-              '</span>' +
-            '</span>' +
+          '<span style="font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">' +
+          '<i class="' + (isDark ? 'ri-moon-line' : 'ri-sun-line') + '" style="color: ' + (isDark ? '#60a5fa' : '#f59e0b') + ';"></i>' +
+          '<span>' + (isDark ? 'Tối' : 'Sáng') + '</span>' +
+          '</span>' +
+          '<span class="theme-switch" role="switch" aria-checked="' + isDark + '">' +
+          '<span class="theme-switch-thumb">' +
+          '<i class="' + (isDark ? 'ri-moon-fill' : 'ri-sun-fill') + '" style="font-size: 11px;"></i>' +
+          '</span>' +
+          '</span>' +
           '</span>';
       }
 
       function setTheme(t) {
         var theme = t === 'dark' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', theme);
-        try { localStorage.setItem('autolabel_theme', theme); } catch (e) {}
+        try { localStorage.setItem('autolabel_theme', theme); } catch (e) { }
         updateThemeBtn();
       }
 
@@ -630,7 +840,7 @@
 
       var btn = document.getElementById('landingThemeBtn');
       if (btn) {
-        btn.addEventListener('click', function(e) {
+        btn.addEventListener('click', function (e) {
           e.preventDefault();
           toggleTheme();
         });
@@ -638,13 +848,167 @@
 
       updateThemeBtn();
 
-      window.addEventListener('storage', function(e) {
+      window.addEventListener('storage', function (e) {
         if (e.key === 'autolabel_theme' && e.newValue) {
           document.documentElement.setAttribute('data-theme', e.newValue);
           updateThemeBtn();
         }
       });
     })();
+
+    // 3. Scroll Reading Progress Bar
+    (function initScrollProgress() {
+      var bar = document.getElementById('lpScrollProgress');
+      if (!bar) return;
+      window.addEventListener('scroll', function () {
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        var scrolled = (h > 0) ? (window.pageYOffset / h) * 100 : 0;
+        bar.style.width = scrolled + '%';
+      }, { passive: true });
+    })();
+
+    // 4. Interactive Card Spotlight Cursor Tracker
+    (function initCardSpotlight() {
+      var cards = document.querySelectorAll('.lp-card, .lp-step-card, .lp-risk-card, .lp-spec-card, .lp-risk-simulator');
+      cards.forEach(function (card) {
+        card.addEventListener('mousemove', function (e) {
+          var rect = card.getBoundingClientRect();
+          var x = e.clientX - rect.left;
+          var y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', x + 'px');
+          card.style.setProperty('--mouse-y', y + 'px');
+        });
+      });
+    })();
+
+    // 5. Scroll Reveal & Number Counter Animations
+    (function initScrollReveal() {
+      var elements = document.querySelectorAll('.lp-reveal');
+      if (!('IntersectionObserver' in window)) {
+        elements.forEach(function (el) { el.classList.add('lp-revealed'); });
+        return;
+      }
+
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('lp-revealed');
+
+            // Trigger counter animation if inside metrics
+            var counters = entry.target.querySelectorAll('[data-counter-target]');
+            counters.forEach(function (counter) {
+              if (counter.getAttribute('data-counted')) return;
+              counter.setAttribute('data-counted', 'true');
+              var target = parseInt(counter.getAttribute('data-counter-target'), 10);
+              var suffix = counter.getAttribute('data-counter-suffix') || '';
+              var start = 0;
+              var duration = 1200;
+              var startTime = null;
+
+              function step(timestamp) {
+                if (!startTime) startTime = timestamp;
+                var progress = Math.min((timestamp - startTime) / duration, 1);
+                var current = Math.floor(progress * target);
+                counter.innerText = current + suffix;
+                if (progress < 1) {
+                  requestAnimationFrame(step);
+                } else {
+                  counter.innerText = target + suffix;
+                }
+              }
+              requestAnimationFrame(step);
+            });
+
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+
+      elements.forEach(function (el) { observer.observe(el); });
+    })();
+
+    // 6. Interactive QA Agent Risk Formula Simulator
+    (function initRiskSimulator() {
+      var confSlider = document.getElementById('simConf');
+      var lidarSlider = document.getElementById('simLidar');
+      var geomSlider = document.getElementById('simGeom');
+
+      var confVal = document.getElementById('simConfVal');
+      var lidarVal = document.getElementById('simLidarVal');
+      var geomVal = document.getElementById('simGeomVal');
+
+      var scoreNum = document.getElementById('simScoreNum');
+      var badge = document.getElementById('simRiskBadge');
+      var verdictText = document.getElementById('simVerdictText');
+      var marker = document.getElementById('simMeterMarker');
+      var actionText = document.getElementById('simActionText');
+      var actionIcon = document.querySelector('#simActionHint i');
+
+      if (!confSlider || !lidarSlider || !geomSlider) return;
+
+      function updateSimulation() {
+        var conf = parseFloat(confSlider.value);
+        var lidarPts = parseInt(lidarSlider.value, 10);
+        var geomPts = parseInt(geomSlider.value, 10);
+
+        // Update labels
+        confVal.textContent = conf.toFixed(2) + (conf >= 0.85 ? ' (YOLOE-26L Rõ nét)' : conf >= 0.5 ? ' (Bị che khuất một phần)' : ' (Không chắc chắn)');
+        lidarVal.textContent = Math.round(lidarPts * 2.2) + ' điểm ' + (lidarPts >= 75 ? '(Đậm đặc)' : lidarPts >= 40 ? '(Trung bình)' : '(Rỗng / Thưa)');
+        geomVal.textContent = (geomPts / 100).toFixed(2) + (geomPts >= 80 ? ' (Khớp chuẩn 3D)' : geomPts >= 50 ? ' (Lệch nhẹ)' : ' (Bất thường / Nhấp nháy)');
+
+        // Formula: risk = 0.60 * (1 - conf) + 0.25 * (1 - lidar/100) + 0.15 * (1 - geom/100)
+        var confRisk = (1.0 - conf);
+        var lidarRisk = (1.0 - (lidarPts / 100));
+        var geomRisk = (1.0 - (geomPts / 100));
+        var totalRisk = (0.60 * confRisk) + (0.25 * lidarRisk) + (0.15 * geomRisk);
+        totalRisk = Math.max(0, Math.min(1, totalRisk));
+
+        scoreNum.textContent = totalRisk.toFixed(2);
+
+        // Move marker
+        var percent = Math.min(100, Math.max(0, totalRisk * 100));
+        marker.style.left = percent + '%';
+
+        // Update risk tiers
+        badge.classList.remove('tier-low', 'tier-med', 'tier-high');
+
+        if (totalRisk < 0.17) {
+          badge.classList.add('tier-low');
+          verdictText.textContent = 'RỦI RO THẤP — BULK APPROVE (1-CLICK)';
+          scoreNum.style.color = 'var(--lp-accent-green)';
+          actionText.innerHTML = 'Box đạt kiểm chứng an toàn cao. Hệ thống tự động gom vào nhóm <b>Duyệt cả loạt (Bulk Approve)</b> không tốn thời gian kiểm tra.';
+          if (actionIcon) {
+            actionIcon.className = 'ri-checkbox-circle-fill';
+            actionIcon.style.color = 'var(--lp-accent-green)';
+          }
+        } else if (totalRisk < 0.40) {
+          badge.classList.add('tier-med');
+          verdictText.textContent = 'RỦI RO VỪA — GỢI Ý CẦN CHÚ Ý';
+          scoreNum.style.color = 'var(--lp-accent-amber)';
+          actionText.innerHTML = 'Vật thể bị che khuất hoặc ít điểm LiDAR. Hệ thống gợi ý <b>SAM 2.1 tinh chỉnh</b> để kỹ sư lướt nhanh.';
+          if (actionIcon) {
+            actionIcon.className = 'ri-eye-line';
+            actionIcon.style.color = 'var(--lp-accent-amber)';
+          }
+        } else {
+          badge.classList.add('tier-high');
+          verdictText.textContent = 'RỦI RO CAO — ƯU TIÊN SỬA THỦ CÔNG';
+          scoreNum.style.color = 'var(--lp-accent-red)';
+          actionText.innerHTML = 'Hiện tượng chập chờn hoặc kích thước bất thường. Đưa lên <b>Hàng đợi ưu tiên can thiệp</b> để kỹ sư sửa box hoặc đổi lớp.';
+          if (actionIcon) {
+            actionIcon.className = 'ri-alert-line';
+            actionIcon.style.color = 'var(--lp-accent-red)';
+          }
+        }
+      }
+
+      confSlider.addEventListener('input', updateSimulation);
+      lidarSlider.addEventListener('input', updateSimulation);
+      geomSlider.addEventListener('input', updateSimulation);
+
+      updateSimulation();
+    })();
   </script>
 </body>
+
 </html>
