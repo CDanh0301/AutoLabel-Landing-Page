@@ -13,7 +13,7 @@
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-  <link rel="stylesheet" href="landing.css?v=2.1">
+  <link rel="stylesheet" href="landing.css?v=2.2">
   <script>
     // Khởi tạo theme tức thì trước khi render để tránh chớp màn hình (FOUC)
     (function () {
@@ -170,26 +170,6 @@
                 <!-- Base Point Cloud Image -->
                 <img src="demo_lidar_bev.png" alt="LiDAR 3D Point Cloud BEV" class="lp-lidar-img">
 
-                <!-- Interactive 3D Bounding Box Overlay 1 (Car #104) -->
-                <div class="lp-target-overlay lp-bev-target-1" title="Đối tượng xe hơi được AI khoanh vùng 3D">
-                  <div class="lp-target-box-3d">
-                    <div class="lp-target-heading-arrow"></div>
-                    <div class="lp-target-corner lp-corner-tl"></div>
-                    <div class="lp-target-corner lp-corner-tr"></div>
-                    <div class="lp-target-corner lp-corner-bl"></div>
-                    <div class="lp-target-corner lp-corner-br"></div>
-                  </div>
-                  <div class="lp-target-pill">Car #104 • 186 pts • 0.94</div>
-                </div>
-
-                <!-- Interactive 3D Bounding Box Overlay 2 (Truck #108) -->
-                <div class="lp-target-overlay lp-bev-target-2" title="Đối tượng xe tải kiểm chứng đa frame">
-                  <div class="lp-target-box-3d lp-target-box-amber">
-                    <div class="lp-target-heading-arrow"></div>
-                  </div>
-                  <div class="lp-target-pill lp-target-pill-amber">Truck #108 • 340 pts • 0.91</div>
-                </div>
-
                 <!-- Telemetry HUD Footer -->
                 <div class="lp-bev-hud">
                   <div class="lp-hud-chip"><span class="lp-hud-pulse"></span> LiDAR OS2-128 • 10Hz</div>
@@ -208,17 +188,6 @@
 
                 <!-- Base Camera 2D Image -->
                 <img src="demo_camera_2d.png" alt="Camera 2D Annotations" class="lp-cam-img">
-
-                <!-- Interactive 2D Bounding Box Overlay -->
-                <div class="lp-target-overlay lp-cam-target-1" title="Camera 2D Bounding Box tự động YOLOE-26L">
-                  <div class="lp-cam-bbox">
-                    <div class="lp-corner lp-corner-tl"></div>
-                    <div class="lp-corner lp-corner-tr"></div>
-                    <div class="lp-corner lp-corner-bl"></div>
-                    <div class="lp-corner lp-corner-br"></div>
-                  </div>
-                  <div class="lp-target-pill">[Car #104 | 94% | YOLOE-26L]</div>
-                </div>
 
                 <!-- Telemetry HUD Footer -->
                 <div class="lp-cam-hud">
@@ -335,7 +304,7 @@
 
       <div class="lp-grid-3">
         <!-- Card 1: Review by Exception (Tia sét 3D + Bounding Box phân tầng chuyển động) -->
-        <div class="lp-card lp-reveal lp-reveal-delay-1">
+        <div class="lp-card">
           <div class="lp-card-icon-3d lp-3d-flash">
             <div class="lp-3d-glow lp-glow-cyan"></div>
             <div class="lp-3d-symbol lp-3d-symbol-flash" aria-label="Review by Exception">
@@ -355,7 +324,7 @@
         </div>
 
         <!-- Card 2: QA Agent 4 Trụ Cột (Khiên an ninh 3D bảo mật đa lớp + Vành đai Radar quét) -->
-        <div class="lp-card lp-reveal lp-reveal-delay-2">
+        <div class="lp-card">
           <div class="lp-card-icon-3d lp-3d-shield">
             <div class="lp-3d-glow lp-glow-purple"></div>
             <div class="lp-3d-symbol lp-3d-symbol-shield" aria-label="QA Agent 4 Trụ Cột">
@@ -375,7 +344,7 @@
         </div>
 
         <!-- Card 3: Lan Truyền Nhãn Thông Minh (Mạng đồ thị nút 3D kết nối luồng lan truyền) -->
-        <div class="lp-card lp-reveal lp-reveal-delay-3">
+        <div class="lp-card">
           <div class="lp-card-icon-3d lp-3d-merge">
             <div class="lp-3d-glow lp-glow-blue"></div>
             <div class="lp-3d-symbol lp-3d-symbol-nodes" aria-label="Lan Truyền Nhãn Thông Minh">
@@ -521,9 +490,11 @@
               <p class="lp-sim-sub">Kéo các thanh trượt bên dưới để xem thuật toán tự động tính điểm rủi ro và ra quyết định duyệt.</p>
             </div>
           </div>
-          <div class="lp-sim-badge tier-low" id="simRiskBadge">
-            <span class="lp-sim-dot"></span>
-            <span id="simVerdictText">RỦI RO THẤP — BULK APPROVE (1-CLICK)</span>
+          <div class="lp-sim-badge-slot">
+            <div class="lp-sim-badge tier-low" id="simRiskBadge">
+              <span class="lp-sim-dot"></span>
+              <span id="simVerdictText">RỦI RO THẤP — BULK APPROVE (1-CLICK)</span>
+            </div>
           </div>
         </div>
 
@@ -613,7 +584,7 @@
 
       <div class="lp-grid-4">
         <!-- Spec 1: Mô hình Hiện đại (Khối não bộ AI 3D phát sáng + Synapse luân chuyển) -->
-        <div class="lp-spec-card lp-reveal lp-reveal-delay-1">
+        <div class="lp-spec-card">
           <div class="lp-card-icon-3d lp-3d-model">
             <div class="lp-3d-glow lp-glow-blue"></div>
             <div class="lp-3d-symbol lp-3d-symbol-brain" aria-label="Mô hình Hiện đại">
@@ -628,7 +599,7 @@
         </div>
 
         <!-- Spec 2: Bảo mật & Quyền riêng tư (Ổ khóa an ninh 3D đóng mở + Khiên quét) -->
-        <div class="lp-spec-card lp-reveal lp-reveal-delay-2">
+        <div class="lp-spec-card">
           <div class="lp-card-icon-3d lp-3d-lock">
             <div class="lp-3d-glow lp-glow-cyan"></div>
             <div class="lp-3d-symbol lp-3d-symbol-lock" aria-label="Bảo mật & Quyền riêng tư">
@@ -644,7 +615,7 @@
         </div>
 
         <!-- Spec 3: Xuất Chuẩn Đa Dạng (Tệp dữ liệu 3D phân tầng lơ lửng + Mũi tên trích xuất) -->
-        <div class="lp-spec-card lp-reveal lp-reveal-delay-3">
+        <div class="lp-spec-card">
           <div class="lp-card-icon-3d lp-3d-export">
             <div class="lp-3d-glow lp-glow-purple"></div>
             <div class="lp-3d-symbol lp-3d-symbol-export" aria-label="Xuất Chuẩn Đa Dạng">
@@ -660,7 +631,7 @@
         </div>
 
         <!-- Spec 4: Audit Log Minh Bạch (Đồng hồ / Vòng quay lịch sử 3D với con trỏ thời gian) -->
-        <div class="lp-spec-card lp-reveal lp-reveal-delay-4">
+        <div class="lp-spec-card">
           <div class="lp-card-icon-3d lp-3d-audit">
             <div class="lp-3d-glow lp-glow-emerald"></div>
             <div class="lp-3d-symbol lp-3d-symbol-audit" aria-label="Audit Log Minh Bạch">
@@ -952,9 +923,9 @@
         var geomPts = parseInt(geomSlider.value, 10);
 
         // Update labels
-        confVal.textContent = conf.toFixed(2) + (conf >= 0.85 ? ' (YOLOE-26L Rõ nét)' : conf >= 0.5 ? ' (Bị che khuất một phần)' : ' (Không chắc chắn)');
-        lidarVal.textContent = Math.round(lidarPts * 2.2) + ' điểm ' + (lidarPts >= 75 ? '(Đậm đặc)' : lidarPts >= 40 ? '(Trung bình)' : '(Rỗng / Thưa)');
-        geomVal.textContent = (geomPts / 100).toFixed(2) + (geomPts >= 80 ? ' (Khớp chuẩn 3D)' : geomPts >= 50 ? ' (Lệch nhẹ)' : ' (Bất thường / Nhấp nháy)');
+        confVal.textContent = conf.toFixed(2);
+        lidarVal.textContent = Math.round(lidarPts * 2.2) + ' điểm';
+        geomVal.textContent = (geomPts / 100).toFixed(2);
 
         // Formula: risk = 0.60 * (1 - conf) + 0.25 * (1 - lidar/100) + 0.15 * (1 - geom/100)
         var confRisk = (1.0 - conf);
